@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Suggest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="pages.css">
+</head>
+<body class="suggest-page">
+  <div class="center-stack">
+    <h1>Suggest Something</h1>
+    <p>Submit ideas or report links that need fixing. The sheet below can take a moment to load.</p>
+    <a class="btn" href="https://forms.gle/Jizs131fZeHQGVzN8" target="_blank">Open Suggest Form</a>
+    <button class="refresh" onclick="reloadFrame()">Refresh Embedded Sheet</button>
+    <iframe class="embed" id="info"
+    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTRMacIskOWkdiC8zzP4HYp6qxqxSBYJMrSOjmb-TqCo2J1RbizwqUSZ4Siljwa0Jztyae4ehjrEyLG/pubhtml?widget=true&headers=false">
+    </iframe>
+  </div>
+
+  <script>
+    function reloadFrame() {
+      const f = document.getElementById('info');
+      f.src = f.src;
+    }
+  </script>
+</body>
+</html>

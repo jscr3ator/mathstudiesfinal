@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Manager</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #050609;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .card {
+      background: rgba(13, 16, 23, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      padding: 36px 32px;
+      width: 340px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    h2 { font-size: 1.3rem; font-weight: 700; }
+
+    label { font-size: 13px; color: #94a3b8; margin-bottom: 4px; display: block; }
+
+    input[type="password"] {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="password"]:focus {
+      border-color: rgba(129, 140, 248, 0.5);
+    }
+
+    button {
+      width: 100%;
+      padding: 11px;
+      background: rgba(129, 140, 248, 0.2);
+      border: 1px solid rgba(129, 140, 248, 0.35);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover { background: rgba(129, 140, 248, 0.35); }
+
+    .danger {
+      background: rgba(248, 113, 113, 0.1);
+      border-color: rgba(248, 113, 113, 0.3);
+    }
+
+    .danger:hover { background: rgba(248, 113, 113, 0.22); }
+
+    #changeSection { display: none; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div id="setSection">
+      <h2>Set a Password</h2>
+      <label for="passwordInput">Password</label>
+      <input type="password" id="passwordInput">
+      <button onclick="setPassword()">Set Password</button>
+    </div>
+
+    <div id="changeSection">
+      <h2>Change Password</h2>
+      <label for="oldPasswordInput">Old Password</label>
+      <input type="password" id="oldPasswordInput">
+      <label for="newPasswordInput">New Password</label>
+      <input type="password" id="newPasswordInput">
+      <button onclick="changePassword()">Change Password</button>
+      <button class="danger" onclick="clearPassword()">Clear Password</button>
+    </div>
+  </div>
+
+  <script>
+    function setPassword() {
+      const pw = document.getElementById('passwordInput').value;
+      localStorage.setItem('password', pw);
+      alert('Done! Return here to clear or change your password.');
+      location.href = '//mathstudies.replit.app';
+    }
+
+    function changePassword() {
+      const old = document.getElementById('oldPasswordInput').value;
+      const nw = document.getElementById('newPasswordInput').value;
+      if (old === localStorage.getItem('password')) {
+        localStorage.setItem('password', nw);
+        alert('Password changed successfully!');
+      } else {
+        alert('Old password is incorrect.');
+      }
+    }
+
+    function clearPassword() {
+      localStorage.removeItem('password');
+      location.reload();
+    }
+
+    window.onload = () => {
+      if (localStorage.getItem('password')) {
+        document.getElementById('setSection').style.display = 'none';
+        document.getElementById('changeSection').style.display = 'flex';
+        document.getElementById('changeSection').style.flexDirection = 'column';
+        document.getElementById('changeSection').style.gap = '12px';
+      }
+    };
+  </script>
+</body>
+</html>
