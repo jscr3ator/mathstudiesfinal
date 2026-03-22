@@ -34,7 +34,6 @@
       align-items: center;
       justify-content: center;
       overflow: hidden;
-      /* Smooth Mesh Gradient Background */
       background-image:
         radial-gradient(at 0% 0%, hsla(231, 75%, 15%, 0.4) 0px, transparent 50%),
         radial-gradient(at 100% 100%, hsla(260, 75%, 15%, 0.3) 0px, transparent 50%);
@@ -92,7 +91,17 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
-    /* Search Component */
+    .stats-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 10px 20px;
+      border-radius: 100px;
+      font-weight: 700;
+      font-family: monospace;
+      color: var(--accent-secondary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
     .search-area {
       position: relative;
       width: 100%;
@@ -127,7 +136,6 @@
       color: var(--text-muted);
     }
 
-    /* Bento Grid Layout */
     .bento-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -156,7 +164,6 @@
       transform: translateY(-5px);
     }
 
-    /* Content Styling */
     .item-icon {
       font-size: 32px;
       margin-bottom: auto;
@@ -203,7 +210,29 @@
       color: var(--accent);
     }
 
-    /* Responsive */
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+      position: relative;
+      transition: color 0.3s ease;
+    }
+
+    a:hover {
+      color: #9ca3f5;
+    }
+
+    .update-slide a {
+      border-bottom: 1px solid rgba(129, 140, 248, 0.3);
+      padding-bottom: 2px;
+      transition: all 0.3s ease;
+    }
+
+    .update-slide a:hover {
+      border-bottom-color: #9ca3f5;
+      color: #9ca3f5;
+    }
+
     @media (max-width: 850px) {
       .bento-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -221,6 +250,266 @@
         align-items: flex-start;
       }
     }
+
+    .update-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .update-modal-overlay.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    .update-modal {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      width: min(600px, 90vw);
+      max-height: 85vh;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      overflow-y: auto;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .arrow-pointer {
+      position: fixed;
+      font-size: 6rem;
+      z-index: 10000;
+      animation: pointArrow 2s ease-in-out forwards;
+      pointer-events: none;
+      color: var(--accent);
+    }
+
+    @keyframes pointArrow {
+      0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.5);
+      }
+      20% {
+        opacity: 1;
+      }
+      80% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(30px) scale(0.5);
+      }
+    }
+
+    .blur-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 9998;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .badge-zoom {
+      position: fixed;
+      z-index: 10000;
+      animation: zoomToCenter 3s ease-in-out forwards;
+      cursor: pointer;
+    }
+
+    @keyframes zoomToCenter {
+      0% {
+        transform: scale(1);
+        bottom: 20px;
+        right: 20px;
+      }
+      50% {
+        transform: scale(8);
+        bottom: 50%;
+        right: 50%;
+      }
+      100% {
+        transform: scale(1);
+        bottom: 20px;
+        right: 20px;
+      }
+    }
+
+    .update-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: linear-gradient(135deg, #fff 0%, #818cf8 100%);
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+    }
+
+    .update-carousel {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-height: 300px;
+    }
+
+    .update-slide {
+      display: none;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .update-slide.active {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .update-image {
+      width: 100%;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      object-fit: cover;
+    }
+
+    .update-slide h3 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .update-slide p {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .carousel-nav {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      background: var(--accent);
+      width: 24px;
+      border-radius: 4px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    .modal-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .modal-btn-close {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .modal-btn-close:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: var(--text);
+    }
+
+    .modal-btn-next {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .modal-btn-next:hover {
+      background: #9ca3f5;
+    }
+
+    .version-badge {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 8px 16px;
+      background: rgba(129, 140, 248, 0.1);
+      border: 1px solid rgba(129, 140, 248, 0.3);
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--accent);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+
+    .version-badge:hover {
+      background: rgba(129, 140, 248, 0.2);
+      border-color: rgba(129, 140, 248, 0.6);
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 600px) {
+      .update-modal {
+        padding: 24px;
+      }
+
+      .update-title {
+        font-size: 1.6rem;
+      }
+
+      .update-slide h3 {
+        font-size: 1.1rem;
+      }
+    }
   </style>
 </head>
 
@@ -230,9 +519,10 @@
     <header class="header">
       <div class="brand">
         <h1 onclick="cloak()">mathstudies</h1>
-        <p>get ready for more updates | idk how this blew up</p>
+        <p>get ready for more updates | lets make games easy to access again.</p>
 
         <div class="time-card" id="clock">00:00:00</div>
+        <div class="stats-card" id="pageViews">📊 Loading...</div>
     </header>
 
     <div class="search-area">
@@ -255,7 +545,7 @@
       </a>
 
       <a href="coding/procy.html" class="bento-item">
-        <div class="item-icon">🎮</div>
+        <div class="item-icon">🌐</div>
         <div class="content">
           <h3>Proxy Browser</h3>
           <p>open any website, basically (crazygames, poki)</p>
@@ -298,8 +588,177 @@
     </footer>
   </div>
 
+  <div class="update-modal-overlay" id="updateOverlay">
+    <div class="update-modal">
+      <h2 class="update-title">massive update! (v3.0)</h2>
+      
+      <div class="update-carousel">
+        <div class="update-slide active">
+          <img class="update-image" src="images/version.png" alt="Update 1">
+          <h3>Hope you enjoy these few features.</h3>
+          <p>You suggested, and I did them, ok that was corny ngl just scroll lol</p>
+        </div>
+
+        <div class="update-slide">
+          <img class="update-image" src="images/extensionpreview2.png" alt="Update 2">
+          <h3>Chrome Extension</h3>
+          <p>Check out the latest <a href="extension.html">chrome extension</a> we made to use mathstudies wherever you browse without ever opening a new tab. (v0.5 Alpha Release)</p>
+        </div>
+
+        <div class="update-slide">
+          <img class="update-image" src="images/guideversion.png" alt="Update 3">
+          <h3>Guides - unblocking and etc</h3>
+          <p>If you're geeked, why not take a shot at our guide? guides are all made by mathstudies. never deal with those wifi blocks again 🫣.</p>
+        </div>
+
+         <div class="update-slide">
+          <img class="update-image" src="images/guideproxy.png" alt="Update 4">
+          <h3>Proxying</h3>
+          <p>Guides too hard? No problem use a simple <a href="proxy.html">proxy</a> to access blocked content.</p>
+        </div>
+
+        <div class="update-slide">
+          <img class="update-image" src="images/community.png" alt="Update 5">
+          <h3>Community</h3>
+          <p>Your suggestions are valued! Check out the <a href="community.html">community</a> to view games suggested by yall!</p>
+        </div>
+
+        <div class="update-slide">
+          <h3 style="text-align: center; margin-top: 40px;">Forgot what's added?</h3>
+          <p style="text-align: center; font-size: 16px; margin-top: 20px;">Just check <a href="updates.html" onclick="showArrowAnimation(event)">here</a></p>
+        </div>
+      </div>
+
+      <div class="carousel-nav" id="carouselNav"></div>
+
+      <div class="modal-buttons">
+        <button class="modal-btn modal-btn-close" onclick="closeUpdateModal()">Got it</button>
+        <button class="modal-btn modal-btn-next" onclick="nextSlide()" id="nextBtn">Next →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Version Badge at Bottom Right -->
+  <div class="version-badge" onclick="showUpdateModal()">v3.0 What's New</div>
+
   <script>
-    // Live Clock (12-hour format)
+    let currentSlide = 0;
+    const UPDATE_VERSION = '3.0';
+
+    function initializeCarouselDots() {
+      const slides = document.querySelectorAll('.update-slide');
+      const carouselNav = document.getElementById('carouselNav');
+      carouselNav.innerHTML = '';
+      
+      slides.forEach((slide, index) => {
+        const dot = document.createElement('span');
+        dot.className = 'dot' + (index === 0 ? ' active' : '');
+        dot.onclick = () => goToSlide(index);
+        carouselNav.appendChild(dot);
+      });
+    }
+
+    function initializePageViews() {
+      const apiUrl = 'https://mathstudiess.vercel.app/api/views';
+      
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          if (data && (data.value || data.value === 0)) {
+            document.getElementById('pageViews').textContent = `📊 ${data.value} views`;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching views:', error);
+          document.getElementById('pageViews').textContent = `📊 Views`;
+        });
+    }
+
+    window.addEventListener('load', function() {
+      initializeCarouselDots();
+      initializePageViews();
+      const savedVersion = localStorage.getItem('updateVersion');
+      if (savedVersion !== UPDATE_VERSION) {
+        showUpdateModal();
+      }
+    });
+
+    function showUpdateModal() {
+      document.getElementById('updateOverlay').classList.add('active');
+      currentSlide = 0;
+      updateSlide();
+    }
+
+    function closeUpdateModal() {
+      document.getElementById('updateOverlay').classList.remove('active');
+      localStorage.setItem('updateVersion', UPDATE_VERSION);
+    }
+
+    function updateSlide() {
+      const slides = document.querySelectorAll('.update-slide');
+      const dots = document.querySelectorAll('.dot');
+      const nextBtn = document.getElementById('nextBtn');
+
+      slides.forEach((slide, index) => {
+        slide.classList.remove('active');
+        if (index === currentSlide) {
+          slide.classList.add('active');
+        }
+      });
+
+      dots.forEach((dot, index) => {
+        dot.classList.remove('active');
+        if (index === currentSlide) {
+          dot.classList.add('active');
+        }
+      });
+
+      if (currentSlide === slides.length - 1) {
+        nextBtn.textContent = 'Done ✓';
+        nextBtn.onclick = closeUpdateModal;
+      } else {
+        nextBtn.textContent = 'Next →';
+        nextBtn.onclick = nextSlide;
+      }
+    }
+
+    function nextSlide() {
+      const slides = document.querySelectorAll('.update-slide');
+      currentSlide = (currentSlide + 1) % slides.length;
+      updateSlide();
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      updateSlide();
+    }
+
+    function showArrowAnimation(event) {
+      event.preventDefault();
+      closeUpdateModal();
+      
+      setTimeout(() => {
+        const versionBadge = document.querySelector('.version-badge');
+        
+        const blur = document.createElement('div');
+        blur.className = 'blur-background';
+        document.body.appendChild(blur);
+
+        const zoomedBadge = document.createElement('div');
+        zoomedBadge.className = 'badge-zoom version-badge';
+        zoomedBadge.textContent = versionBadge.textContent;
+        zoomedBadge.style.bottom = '20px';
+        zoomedBadge.style.right = '20px';
+        
+        document.body.appendChild(zoomedBadge);
+        
+        setTimeout(() => {
+          zoomedBadge.remove();
+          blur.remove();
+        }, 3000);
+      }, 100);
+    }
+
     function updateClock() {
       const now = new Date();
       const timeStr = now.toLocaleTimeString([], {
