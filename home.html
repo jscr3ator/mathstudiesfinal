@@ -80,27 +80,6 @@
       font-weight: 500;
     }
 
-    .time-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      padding: 10px 20px;
-      border-radius: 100px;
-      font-weight: 700;
-      font-family: monospace;
-      color: var(--accent);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
-
-    .stats-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      padding: 10px 20px;
-      border-radius: 100px;
-      font-weight: 700;
-      font-family: monospace;
-      color: var(--accent-secondary);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    }
 
     .search-area {
       position: relative;
@@ -519,10 +498,7 @@
     <header class="header">
       <div class="brand">
         <h1 onclick="cloak()">mathstudies</h1>
-        <p>get ready for more updates | lets make games easy to access again.</p>
-
-        <div class="time-card" id="clock">00:00:00</div>
-        <div class="stats-card" id="pageViews">📊 Loading...</div>
+        <p>get ready for more updates | lets make websites easy to access again.</p>
     </header>
 
     <div class="search-area">
@@ -658,25 +634,8 @@
       });
     }
 
-    function initializePageViews() {
-      const apiUrl = 'https://mathstudiess.vercel.app/api/views';
-      
-      fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-          if (data && (data.value || data.value === 0)) {
-            document.getElementById('pageViews').textContent = `📊 ${data.value} views`;
-          }
-        })
-        .catch(error => {
-          console.error('Error fetching views:', error);
-          document.getElementById('pageViews').textContent = `📊 Views`;
-        });
-    }
-
     window.addEventListener('load', function() {
       initializeCarouselDots();
-      initializePageViews();
       const savedVersion = localStorage.getItem('updateVersion');
       if (savedVersion !== UPDATE_VERSION) {
         showUpdateModal();
@@ -758,19 +717,6 @@
         }, 3000);
       }, 100);
     }
-
-    function updateClock() {
-      const now = new Date();
-      const timeStr = now.toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      });
-      document.getElementById('clock').textContent = timeStr;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
 
     // Search Logic
     function filterTiles() {
