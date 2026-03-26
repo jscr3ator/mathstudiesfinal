@@ -3,28 +3,187 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Suggest</title>
+  <title>Suggest Something</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="pages.css">
-</head>
-<body class="suggest-page">
-  <div class="center-stack">
-    <h1>Suggest Something</h1>
-    <p>Submit ideas or report links that need fixing. The sheet below can take a moment to load.</p>
-    <a class="btn" href="https://forms.gle/Jizs131fZeHQGVzN8" target="_blank">Open Suggest Form</a>
-    <button class="refresh" onclick="reloadFrame()">Refresh Embedded Sheet</button>
-    <iframe class="embed" id="info"
-    src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTRMacIskOWkdiC8zzP4HYp6qxqxSBYJMrSOjmb-TqCo2J1RbizwqUSZ4Siljwa0Jztyae4ehjrEyLG/pubhtml?widget=true&headers=false">
-    </iframe>
-  </div>
+  <style>
+    /* Reset and Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden; /* Prevent body scroll, let iframe handle it */
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: #fcfcfc;
+      color: #1a1a1a;
+    }
+
+    /* Main Layout Stack */
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100%;
+    }
+
+    /* Header Section */
+    .header {
+      padding: 24px;
+      background: white;
+      border-bottom: 1px solid #eee;
+      z-index: 10;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    }
+
+    h1 {
+      font-family: 'Fraunces', serif;
+      font-weight: 800;
+      font-size: 2rem;
+      margin-bottom: 8px;
+      color: #000;
+    }
+
+    p {
+      color: #666;
+      margin-bottom: 16px;
+      max-width: 600px;
+      line-height: 1.5;
+    }
+
+    /* Actions Row */
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .btn-primary {
+      background-color: #000;
+      color: #fff;
+      border: 1px solid #000;
+    }
+
+    .btn-primary:hover {
+      background-color: #333;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: #333;
+      border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+      background-color: #f5f5f5;
+      border-color: #ccc;
+    }
+
+    /* Iframe Styling - The "Whole Window" fix */
+    .embed-container {
+      flex-grow: 1; /* Take up all remaining space */
+      width: 100%;
+      position: relative;
+      background: #f0f0f0;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Loading placeholder logic */
+    .loader {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #999;
+      font-weight: 500;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    @media (max-width: 600px) {
+      .header {
+        padding: 16px;
+      }
+      h1 {
+        font-size: 1.5rem;
+      }
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
   <script>
+    // Moving scripts to head ensures functions exist before iframe onload triggers
+    function hideLoader() {
+      const loader = document.querySelector('.loader');
+      if (loader) {
+        loader.style.display = 'none';
+      }
+    }
+
     function reloadFrame() {
       const f = document.getElementById('info');
-      f.src = f.src;
+      const loader = document.querySelector('.loader');
+      
+      if (loader) {
+        loader.style.display = 'block';
+      }
+      
+      // Adding a simple cache buster to force a real refresh
+      const baseSrc = f.src.split('&refresh=')[0];
+      f.src = baseSrc + '&refresh=' + new Date().getTime();
     }
   </script>
+</head>
+<body class="suggest-page">
+  <div class="app-container">
+    <header class="header">
+      <h1>Suggest Something</h1>
+      <p>Submit ideas or report links that need fixing. The sheet below updates automatically.</p>
+      
+      <div class="actions">
+        <a class="btn btn-primary" href="https://forms.gle/Jizs131fZeHQGVzN8" target="_blank">
+          Open Suggest Form
+        </a>
+        <button class="btn btn-secondary" onclick="reloadFrame()">
+          Refresh Sheet
+        </button>
+      </div>
+    </header>
+
+    <main class="embed-container">
+      <div class="loader">Loading Spreadsheet...</div>
+      <iframe 
+        id="info"
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTRMacIskOWkdiC8zzP4HYp6qxqxSBYJMrSOjmb-TqCo2J1RbizwqUSZ4Siljwa0Jztyae4ehjrEyLG/pubhtml?widget=true&headers=false"
+        onload="hideLoader()">
+      </iframe>
+    </main>
+  </div>
 </body>
 </html>
