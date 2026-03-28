@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>mathstudies </title>
+  <title>mathstudies</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
 
@@ -33,7 +33,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      overflow-x: hidden;
       background-image:
         radial-gradient(at 0% 0%, hsla(231, 75%, 15%, 0.4) 0px, transparent 50%),
         radial-gradient(at 100% 100%, hsla(260, 75%, 15%, 0.3) 0px, transparent 50%);
@@ -80,6 +80,69 @@
       font-weight: 500;
     }
 
+    /* OS Mode Toggle Styling */
+    .os-mode-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: var(--card-bg);
+      padding: 12px 24px;
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+      user-select: none;
+    }
+
+    .os-mode-wrapper:hover {
+      border-color: var(--accent);
+      background: rgba(255, 255, 255, 0.05);
+      box-shadow: 0 0 20px rgba(129, 140, 248, 0.1);
+    }
+
+    .os-mode-label {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-weight: 800;
+      font-size: 14px;
+      letter-spacing: 1px;
+      color: var(--text);
+      text-transform: uppercase;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 64px;
+      height: 32px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 100px;
+      border: 1px solid var(--border);
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      display: flex;
+      align-items: center;
+      padding: 0 4px;
+    }
+
+    .toggle-knob {
+      width: 24px;
+      height: 24px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform: translateX(0);
+    }
+
+    .os-mode-wrapper.active .toggle-switch {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 15px rgba(129, 140, 248, 0.4);
+    }
+
+    .os-mode-wrapper.active .toggle-knob {
+      transform: translateX(32px);
+      background: #050609;
+    }
 
     .search-area {
       position: relative;
@@ -118,7 +181,7 @@
     .bento-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: 250px;
+      grid-template-rows: auto;
       gap: 20px;
     }
 
@@ -135,6 +198,7 @@
       display: flex;
       flex-direction: column;
       backdrop-filter: blur(12px);
+      min-height: 250px;
     }
 
     .bento-item:hover {
@@ -207,29 +271,27 @@
       transition: all 0.3s ease;
     }
 
-    .update-slide a:hover {
-      border-bottom-color: #9ca3f5;
-      color: #9ca3f5;
-    }
-
     @media (max-width: 850px) {
       .bento-grid {
         grid-template-columns: repeat(2, 1fr);
-        grid-template-rows: auto;
       }
     }
 
-    @media (max-width: 500px) {
-      .bento-grid {
-        grid-template-columns: 1fr;
-      }
-
+    @media (max-width: 600px) {
       .header {
         flex-direction: column;
         align-items: flex-start;
       }
+      .bento-grid {
+        grid-template-columns: 1fr;
+      }
+      .os-mode-wrapper {
+        width: 100%;
+        justify-content: center;
+      }
     }
 
+    /* Modal Styling */
     .update-modal-overlay {
       display: none;
       position: fixed;
@@ -249,14 +311,7 @@
       display: flex;
     }
 
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .update-modal {
       background: var(--card-bg);
@@ -273,76 +328,8 @@
     }
 
     @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .arrow-pointer {
-      position: fixed;
-      font-size: 6rem;
-      z-index: 10000;
-      animation: pointArrow 2s ease-in-out forwards;
-      pointer-events: none;
-      color: var(--accent);
-    }
-
-    @keyframes pointArrow {
-      0% {
-        opacity: 0;
-        transform: translateY(0) scale(0.5);
-      }
-      20% {
-        opacity: 1;
-      }
-      80% {
-        opacity: 1;
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(30px) scale(0.5);
-      }
-    }
-
-    .blur-background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 9998;
-      animation: fadeIn 0.2s ease-out;
-    }
-
-    .badge-zoom {
-      position: fixed;
-      z-index: 10000;
-      animation: zoomToCenter 3s ease-in-out forwards;
-      cursor: pointer;
-    }
-
-    @keyframes zoomToCenter {
-      0% {
-        transform: scale(1);
-        bottom: 20px;
-        right: 20px;
-      }
-      50% {
-        transform: scale(8);
-        bottom: 50%;
-        right: 50%;
-      }
-      100% {
-        transform: scale(1);
-        bottom: 20px;
-        right: 20px;
-      }
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .update-title {
@@ -354,13 +341,6 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       text-align: center;
-    }
-
-    .update-carousel {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      min-height: 300px;
     }
 
     .update-slide {
@@ -381,18 +361,6 @@
       border: 1px solid var(--border);
       border-radius: 16px;
       object-fit: cover;
-    }
-
-    .update-slide h3 {
-      font-size: 1.4rem;
-      font-weight: 600;
-      color: var(--accent);
-    }
-
-    .update-slide p {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.6;
     }
 
     .carousel-nav {
@@ -440,18 +408,9 @@
       border: 1px solid var(--border);
     }
 
-    .modal-btn-close:hover {
-      background: rgba(255, 255, 255, 0.12);
-      color: var(--text);
-    }
-
     .modal-btn-next {
       background: var(--accent);
       color: #000;
-    }
-
-    .modal-btn-next:hover {
-      background: #9ca3f5;
     }
 
     .version-badge {
@@ -470,24 +429,22 @@
       z-index: 100;
     }
 
-    .version-badge:hover {
-      background: rgba(129, 140, 248, 0.2);
-      border-color: rgba(129, 140, 248, 0.6);
-      transform: scale(1.05);
+    /* Animation classes from original version */
+    .blur-background {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5); z-index: 9998;
+      animation: fadeIn 0.2s ease-out;
     }
-
-    @media (max-width: 600px) {
-      .update-modal {
-        padding: 24px;
-      }
-
-      .update-title {
-        font-size: 1.6rem;
-      }
-
-      .update-slide h3 {
-        font-size: 1.1rem;
-      }
+    .badge-zoom {
+      position: fixed; z-index: 10000;
+      animation: zoomToCenter 3s ease-in-out forwards;
+      cursor: pointer;
+    }
+    @keyframes zoomToCenter {
+      0% { transform: scale(1); bottom: 20px; right: 20px; }
+      50% { transform: scale(8); bottom: 50%; right: 50%; }
+      100% { transform: scale(1); bottom: 20px; right: 20px; }
     }
   </style>
 </head>
@@ -499,6 +456,16 @@
       <div class="brand">
         <h1 onclick="cloak()">mathstudies</h1>
         <p>get ready for more updates | lets make websites easy to access again.</p>
+        <p><b>prefer a more computer like styled view? Try out OS mode --></b></p>
+      </div>
+
+      <!-- OS Mode Toggle -->
+      <div class="os-mode-wrapper" onclick="toggleOSMode(this)">
+        <span class="os-mode-label">OS Mode</span>
+        <div class="toggle-switch">
+          <div class="toggle-knob"></div>
+        </div>
+      </div>
     </header>
 
     <div class="search-area">
@@ -511,7 +478,6 @@
 
     <div class="bento-grid" id="hubGrid">
 
-      <!-- Games Card -->
       <a href="hmm.html" class="bento-item">
         <div class="item-icon">🎮</div>
         <div class="content">
@@ -528,8 +494,6 @@
         </div>
       </a>
 
-
-      <!-- Suggest Card -->
       <a href="suggest.html" class="bento-item">
         <div class="item-icon">💡</div>
         <div class="content">
@@ -538,7 +502,6 @@
         </div>
       </a>
 
-      <!-- Guide Card -->
       <a href="guide.html" class="bento-item">
         <div class="item-icon">📖</div>
         <div class="content">
@@ -547,7 +510,6 @@
         </div>
       </a>
 
-      <!-- Chrome Extension Card -->
       <a href="extension.html" class="bento-item">
         <div class="item-icon">⚙️</div>
         <div class="content">
@@ -614,12 +576,18 @@
     </div>
   </div>
 
-  <!-- Version Badge at Bottom Right -->
   <div class="version-badge" onclick="showUpdateModal()">v3.0 What's New</div>
 
   <script>
     let currentSlide = 0;
     const UPDATE_VERSION = '3.0';
+
+    function toggleOSMode(el) {
+      el.classList.toggle('active');
+      setTimeout(() => {
+        window.location.href = '/os';
+      }, 450);
+    }
 
     function initializeCarouselDots() {
       const slides = document.querySelectorAll('.update-slide');
@@ -660,16 +628,12 @@
 
       slides.forEach((slide, index) => {
         slide.classList.remove('active');
-        if (index === currentSlide) {
-          slide.classList.add('active');
-        }
+        if (index === currentSlide) slide.classList.add('active');
       });
 
       dots.forEach((dot, index) => {
         dot.classList.remove('active');
-        if (index === currentSlide) {
-          dot.classList.add('active');
-        }
+        if (index === currentSlide) dot.classList.add('active');
       });
 
       if (currentSlide === slides.length - 1) {
@@ -695,22 +659,17 @@
     function showArrowAnimation(event) {
       event.preventDefault();
       closeUpdateModal();
-      
       setTimeout(() => {
         const versionBadge = document.querySelector('.version-badge');
-        
         const blur = document.createElement('div');
         blur.className = 'blur-background';
         document.body.appendChild(blur);
-
         const zoomedBadge = document.createElement('div');
         zoomedBadge.className = 'badge-zoom version-badge';
         zoomedBadge.textContent = versionBadge.textContent;
         zoomedBadge.style.bottom = '20px';
         zoomedBadge.style.right = '20px';
-        
         document.body.appendChild(zoomedBadge);
-        
         setTimeout(() => {
           zoomedBadge.remove();
           blur.remove();
@@ -718,33 +677,23 @@
       }, 100);
     }
 
-    // Search Logic
     function filterTiles() {
       const input = document.getElementById('toolSearch');
       const filter = input.value.toLowerCase();
       const tiles = document.getElementsByClassName('bento-item');
-
       for (let i = 0; i < tiles.length; i++) {
-        const title = tiles[i].querySelector('h3');
-        const desc = tiles[i].querySelector('p');
-        const content = (title.textContent + desc.textContent).toLowerCase();
-
-        if (content.includes(filter)) {
-          tiles[i].style.display = "flex";
-        } else {
-          tiles[i].style.display = "none";
-        }
+        const title = tiles[i].querySelector('h3').textContent.toLowerCase();
+        const desc = tiles[i].querySelector('p').textContent.toLowerCase();
+        tiles[i].style.display = (title.includes(filter) || desc.includes(filter)) ? "flex" : "none";
       }
     }
 
     function cloak() {
       const win = window.open('about:blank', '_blank');
       if (!win) return;
-
       const iframe = win.document.createElement('iframe');
       iframe.src = window.location.origin + '/home.html';
       iframe.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;";
-
       win.document.body.style.margin = "0";
       win.document.body.appendChild(iframe);
       window.location.replace("https://google.com");
