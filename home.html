@@ -265,12 +265,6 @@
       color: #9ca3f5;
     }
 
-    .update-slide a {
-      border-bottom: 1px solid rgba(129, 140, 248, 0.3);
-      padding-bottom: 2px;
-      transition: all 0.3s ease;
-    }
-
     @media (max-width: 850px) {
       .bento-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -343,74 +337,58 @@
       text-align: center;
     }
 
-    .update-slide {
-      display: none;
-      animation: fadeIn 0.3s ease-out;
-    }
-
-    .update-slide.active {
+    .update-content {
       display: flex;
       flex-direction: column;
       gap: 16px;
+      animation: fadeIn 0.3s ease-out;
     }
 
     .update-image {
       width: 100%;
-      height: 200px;
+      height: auto;
+      max-height: 300px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--border);
       border-radius: 16px;
       object-fit: cover;
     }
 
-    .carousel-nav {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 12px;
+    .update-content h3 {
+      font-size: 1.4rem;
+      color: var(--accent);
+      text-align: center;
     }
 
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.2);
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .dot.active {
-      background: var(--accent);
-      width: 24px;
-      border-radius: 4px;
+    .update-content p {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      text-align: center;
     }
 
     .modal-buttons {
       display: flex;
-      gap: 12px;
       justify-content: center;
       margin-top: 16px;
     }
 
-    .modal-btn {
-      padding: 10px 20px;
+    .modal-btn-done {
+      padding: 12px 40px;
       border: none;
       border-radius: 12px;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    .modal-btn-close {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-    }
-
-    .modal-btn-next {
       background: var(--accent);
       color: #000;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .modal-btn-done:hover {
+      background: #9ca3f5;
+      transform: translateY(-2px);
     }
 
     .version-badge {
@@ -429,7 +407,7 @@
       z-index: 100;
     }
 
-    /* Animation classes from original version */
+    /* Animation classes */
     .blur-background {
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -526,60 +504,26 @@
     </footer>
   </div>
 
+  <!-- Update Modal Section -->
   <div class="update-modal-overlay" id="updateOverlay">
     <div class="update-modal">
-      <h2 class="update-title">massive update! (v3.0)</h2>
+      <h2 class="update-title">introducing os mode v1</h2>
       
-      <div class="update-carousel">
-        <div class="update-slide active">
-          <img class="update-image" src="images/version.png" alt="Update 1">
-          <h3>Hope you enjoy these few features.</h3>
-          <p>You suggested, and I did them, ok that was corny ngl just scroll lol</p>
-        </div>
-
-        <div class="update-slide">
-          <img class="update-image" src="images/extensionpreview2.png" alt="Update 2">
-          <h3>Chrome Extension</h3>
-          <p>Check out the latest <a href="extension.html">chrome extension</a> we made to use mathstudies wherever you browse without ever opening a new tab. (v0.5 Alpha Release)</p>
-        </div>
-
-        <div class="update-slide">
-          <img class="update-image" src="images/guideversion.png" alt="Update 3">
-          <h3>Guides - unblocking and etc</h3>
-          <p>If you're geeked, why not take a shot at our guide? guides are all made by mathstudies. never deal with those wifi blocks again 🫣.</p>
-        </div>
-
-         <div class="update-slide">
-          <img class="update-image" src="images/guideproxy.png" alt="Update 4">
-          <h3>Proxying</h3>
-          <p>Guides too hard? No problem use a simple <a href="proxy.html">proxy</a> to access blocked content.</p>
-        </div>
-
-        <div class="update-slide">
-          <img class="update-image" src="images/community.png" alt="Update 5">
-          <h3>Community</h3>
-          <p>Your suggestions are valued! Check out the <a href="community.html">community</a> to view games suggested by yall!</p>
-        </div>
-
-        <div class="update-slide">
-          <h3 style="text-align: center; margin-top: 40px;">Forgot what's added?</h3>
-          <p style="text-align: center; font-size: 16px; margin-top: 20px;">Just check <a href="updates.html" onclick="showArrowAnimation(event)">here</a></p>
-        </div>
+      <div class="update-content">
+        <img class="update-image" src="https://res.cloudinary.com/js-create/image/upload/v1774677994/Screenshot_2026-03-27_230508_feempu.png" alt="OS Mode Preview">
+        <h3>Experience OS Mode</h3>
+        <p>new way to experience mathstudies for those who enjoy a more computer like clean interface.</p>
       </div>
 
-      <div class="carousel-nav" id="carouselNav"></div>
-
       <div class="modal-buttons">
-        <button class="modal-btn modal-btn-close" onclick="closeUpdateModal()">Got it</button>
-        <button class="modal-btn modal-btn-next" onclick="nextSlide()" id="nextBtn">Next →</button>
+        <button class="modal-btn-done" onclick="closeUpdateModal()">Got it ✓</button>
       </div>
     </div>
   </div>
 
-  <div class="version-badge" onclick="showUpdateModal()">v3.0 What's New</div>
+  <div class="version-badge" onclick="showUpdateModal()">v1 OS mode</div>
 
   <script>
-    let currentSlide = 0;
     const UPDATE_VERSION = '3.0';
 
     function toggleOSMode(el) {
@@ -589,21 +533,7 @@
       }, 450);
     }
 
-    function initializeCarouselDots() {
-      const slides = document.querySelectorAll('.update-slide');
-      const carouselNav = document.getElementById('carouselNav');
-      carouselNav.innerHTML = '';
-      
-      slides.forEach((slide, index) => {
-        const dot = document.createElement('span');
-        dot.className = 'dot' + (index === 0 ? ' active' : '');
-        dot.onclick = () => goToSlide(index);
-        carouselNav.appendChild(dot);
-      });
-    }
-
     window.addEventListener('load', function() {
-      initializeCarouselDots();
       const savedVersion = localStorage.getItem('updateVersion');
       if (savedVersion !== UPDATE_VERSION) {
         showUpdateModal();
@@ -612,48 +542,11 @@
 
     function showUpdateModal() {
       document.getElementById('updateOverlay').classList.add('active');
-      currentSlide = 0;
-      updateSlide();
     }
 
     function closeUpdateModal() {
       document.getElementById('updateOverlay').classList.remove('active');
       localStorage.setItem('updateVersion', UPDATE_VERSION);
-    }
-
-    function updateSlide() {
-      const slides = document.querySelectorAll('.update-slide');
-      const dots = document.querySelectorAll('.dot');
-      const nextBtn = document.getElementById('nextBtn');
-
-      slides.forEach((slide, index) => {
-        slide.classList.remove('active');
-        if (index === currentSlide) slide.classList.add('active');
-      });
-
-      dots.forEach((dot, index) => {
-        dot.classList.remove('active');
-        if (index === currentSlide) dot.classList.add('active');
-      });
-
-      if (currentSlide === slides.length - 1) {
-        nextBtn.textContent = 'Done ✓';
-        nextBtn.onclick = closeUpdateModal;
-      } else {
-        nextBtn.textContent = 'Next →';
-        nextBtn.onclick = nextSlide;
-      }
-    }
-
-    function nextSlide() {
-      const slides = document.querySelectorAll('.update-slide');
-      currentSlide = (currentSlide + 1) % slides.length;
-      updateSlide();
-    }
-
-    function goToSlide(index) {
-      currentSlide = index;
-      updateSlide();
     }
 
     function showArrowAnimation(event) {
