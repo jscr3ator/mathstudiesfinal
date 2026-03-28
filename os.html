@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>mathstudiesOS</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
+    
+    .os-window { will-change: transform, opacity, width, height, top, left; }
+
+    .window-anim {
+      transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                  height 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                  top 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+                  left 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                  border-radius 0.3s ease,
+                  transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  opacity 0.2s ease;
+    }
+
+    .window-dragging { transform: scale(1.02) !important; opacity: 0.9 !important; transition: transform 0.1s ease, opacity 0.1s ease; }
+
+    .glass-ultra {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Bouncy Physics */
+    .btn-press { transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.15s ease; }
+    .btn-press:active { transform: scale(0.9) !important; filter: brightness(0.9); }
+
+    .card-hover { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease; }
+    .card-hover:hover { transform: translateY(-6px) scale(1.03); background: rgba(255,255,255,0.1); }
+    .card-hover:active { transform: translateY(-2px) scale(0.97); }
+
+    .dock-icon { transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease; }
+    .dock-item:hover .dock-icon { transform: scale(1.15) translateY(-6px); }
+    .dock-item:active .dock-icon { transform: scale(0.95) translateY(2px); }
+
+    .control-btn { transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .control-btn:hover { transform: scale(1.2); }
+    .control-btn:active { transform: scale(0.8); }
+
+    .resize-handle { position: absolute; z-index: 50; }
+    .resize-handle.resize-e { right: -4px; top: 0; bottom: 0; width: 12px; cursor: e-resize; }
+    .resize-handle.resize-s { left: 0; bottom: -4px; right: 0; height: 12px; cursor: s-resize; }
+    .resize-handle.resize-se { right: -4px; bottom: -4px; width: 16px; height: 16px; cursor: se-resize; border-bottom-right-radius: 1rem; }
+
+    #boot-screen { position: fixed; inset: 0; background-color: #000; z-index: 9999999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 0.5s ease, transform 0.5s ease, filter 0.5s ease; }
+    .boot-logo { animation: pulseLogo 2s infinite ease-in-out; }
+    .boot-progress-bar { transition: width 1s cubic-bezier(0.65, 0, 0.35, 1); }
+    
+    @keyframes pulseLogo { 0%, 100% { opacity: 0.7; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1.02); } }
+    @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes slideUp { from { transform: translate(-50%, 100%); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
+    
+    @keyframes windowSpawn { 0% { opacity: 0; transform: scale(0.8) translateY(20px); } 60% { transform: scale(1.02) translateY(-5px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+    @keyframes cardSpawn { 0% { opacity: 0; transform: translateY(30px) scale(0.9); } 60% { transform: translateY(-5px) scale(1.02); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+
+    .animate-topbar { animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-dock-in { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .window-spawn { animation: windowSpawn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    
+    .dragging { opacity: 0.5; transform: scale(0.9) !important; }
+    .drag-over { transform: scale(1.05) rotate(3deg) !important; margin: 0 5px; }
+
+    /* True Bouncy Context Menu */
+    #context-menu {
+      visibility: hidden; opacity: 0; transform: scale(0.8);
+      transition: opacity 0.15s ease-out, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0s linear 0.4s;
+    }
+    .ctx-menu-enter {
+      visibility: visible !important; opacity: 1 !important; transform: scale(1) !important;
+      transition: opacity 0.15s ease-out, transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0s linear 0s !important;
+    }
+  </style>
+</head>
+<body class="text-white select-none bg-gray-900 relative">
+
+  <div id="boot-screen">
+    <div class="boot-logo text-5xl font-bold tracking-tighter mb-8 drop-shadow-2xl">mathstudies<span class="text-white/50">OS</span></div>
+    <div class="w-48 h-1.5 bg-white/10 rounded-full overflow-hidden">
+      <div id="boot-progress" class="boot-progress-bar h-full w-0 bg-white rounded-full"></div>
+    </div>
+  </div>
+
+  <div id="desktop-bg" class="absolute inset-0 transition-all duration-700 opacity-0 scale-105" style="background-image: url('https://wallpapers.com/images/hd/sleek-dark-screen-yy7dw7c6z76xlls3.jpg'); background-size: cover; background-position: center;"></div>
+
+  <div id="top-bar" class="h-7 w-full fixed top-0 left-0 bg-black/20 backdrop-blur-md border-b border-white/10 flex justify-between items-center px-4 z-[99999] text-white/90 text-[13px] font-medium tracking-wide opacity-0 transform -translate-y-full">
+    <div class="flex items-center gap-5">
+      <div class="font-bold flex items-center gap-2 cursor-pointer hover:text-white transition-colors">mathstudiesOS</div>
+      <div id="active-app-name" class="font-semibold cursor-default text-white/70"></div>
+    </div>
+    <div class="flex items-center gap-4 text-[12px] font-semibold opacity-90">
+      <span id="clock"></span>
+    </div>
+  </div>
+
+  <div id="window-container" class="absolute inset-0 pt-7 pb-20 overflow-hidden"></div>
+
+  <div id="dock-wrapper" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[99998] opacity-0">
+    <div id="dock" class="glass-ultra p-2.5 rounded-[2rem] flex items-center gap-3 transition-colors duration-300"></div>
+  </div>
+
+  <div id="context-menu" class="fixed z-[999999] w-52 bg-black/75 backdrop-blur-3xl border border-white/10 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] overflow-hidden py-1.5 flex flex-col ctx-menu-exit"></div>
+
+  <script>
+    // --- Data & Config ---
+    const ICONS = {
+      globe: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full"><circle cx="12" cy="12" r="10" fill="currentColor" fill-opacity="0.15"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>`,
+      gamepad: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full"><rect x="2" y="6" width="20" height="12" rx="2" fill="currentColor" fill-opacity="0.15"></rect><line x1="6" y1="12" x2="10" y2="12"></line><line x1="8" y1="10" x2="8" y2="14"></line><line x1="15" y1="13" x2="15.01" y2="13"></line><line x1="18" y1="11" x2="18.01" y2="11"></line></svg>`,
+      book: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" fill="currentColor" fill-opacity="0.15"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>`,
+      store: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full"><path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" fill="currentColor" fill-opacity="0.15"/><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4"/><path d="M2 7h20"/><path d="M22 7v3a2 2 0 0 1-2 2v0a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12v0a2 2 0 0 1-2-2V7"/></svg>`,
+      suggest: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" fill="currentColor" fill-opacity="0.15"/></svg>`,
+      community: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="w-full h-full"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" fill="currentColor" fill-opacity="0.15"/><circle cx="9" cy="7" r="4" fill="currentColor" fill-opacity="0.15"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+      newWin: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>`,
+      pin: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>`,
+      unpin: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`,
+      close: `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`
+    };
+
+    const APPS_CONFIG = {
+      appcenter: { id: 'appcenter', name: 'App Center', desc: 'System Applications', icon: ICONS.store, color: 'bg-gradient-to-br from-pink-500 to-rose-600', w: 850, h: 600 },
+      browser:   { id: 'browser', name: 'Browser', desc: 'Surf the web', icon: ICONS.globe, color: 'bg-gradient-to-br from-blue-400 to-blue-600', w: 900, h: 600, url: 'https://mathstudiess.vercel.app/coding/procy.html' },
+      games:     { id: 'games', name: 'Games', desc: 'Play math games', icon: ICONS.gamepad, color: 'bg-gradient-to-br from-purple-500 to-indigo-600', w: 850, h: 600, url: 'https://mathstudiess.vercel.app/hmm.html' },
+      guides:    { id: 'guides', name: 'Guides', desc: 'Study materials', icon: ICONS.book, color: 'bg-gradient-to-br from-emerald-400 to-teal-600', w: 700, h: 550, url: 'https://mathstudiess.vercel.app/guide.html' },
+      suggest:   { id: 'suggest', name: 'Suggest', desc: 'Feedback & Ideas', icon: ICONS.suggest, color: 'bg-gradient-to-br from-amber-400 to-orange-500', w: 700, h: 550, url: 'https://mathstudiess.vercel.app/suggest.html' },
+      community: { id: 'community', name: 'Community', desc: 'Your suggestions 🔥', icon: ICONS.community, color: 'bg-gradient-to-br from-cyan-400 to-blue-600', w: 850, h: 600, url: 'https://mathstudiess.vercel.app/community.html' }
+    };
+
+    let windows = [];
+    let activeWindowId = null;
+    let highestZIndex = 10;
+    
+    const defaultDock = ['appcenter', 'browser', 'games'];
+    let currentDock = JSON.parse(localStorage.getItem('mathstudies_dock')) || defaultDock;
+
+    // --- DOM Elements ---
+    const windowContainer = document.getElementById('window-container');
+    const dockContainer = document.getElementById('dock');
+    const clockEl = document.getElementById('clock');
+    const activeAppNameEl = document.getElementById('active-app-name');
+    const contextMenu = document.getElementById('context-menu');
+
+    // --- Boot Sequence & Clock ---
+    window.onload = () => {
+      setTimeout(() => { document.getElementById('boot-progress').style.width = '100%'; }, 50);
+      setTimeout(() => {
+        document.getElementById('boot-screen').style.opacity = '0';
+        document.getElementById('boot-screen').style.transform = 'scale(1.05)';
+        document.getElementById('desktop-bg').style.opacity = '1';
+        document.getElementById('desktop-bg').style.transform = 'scale(1)';
+        setTimeout(() => {
+          document.getElementById('boot-screen').remove();
+          document.getElementById('top-bar').classList.add('animate-topbar');
+          document.getElementById('dock-wrapper').classList.add('animate-dock-in');
+          setTimeout(() => { document.getElementById('dock-wrapper').style.opacity = '1'; }, 600);
+        }, 500);
+      }, 1000);
+    };
+
+    setInterval(() => { clockEl.innerText = new Date().toLocaleTimeString([], { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); }, 1000);
+    clockEl.innerText = new Date().toLocaleTimeString([], { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+    window.resetOS = () => { localStorage.clear(); location.reload(); };
+
+    // --- Flawless Right Click Engine ---
+    function showContextMenu(x, y, items) {
+      // Clear out the old menu
+      contextMenu.innerHTML = '';
+      
+      const menuWidth = 208; // Approx width
+      const estHeight = items.length * 40 + 12;
+      let posX = x; let posY = y;
+      let originX = 'left'; let originY = 'top';
+
+      // Keep it on screen
+      if (x + menuWidth > window.innerWidth) { posX = window.innerWidth - menuWidth - 10; originX = 'right'; }
+      if (y + estHeight > window.innerHeight) { posY = window.innerHeight - estHeight - 20; originY = 'bottom'; }
+
+      contextMenu.style.left = `${posX}px`;
+      contextMenu.style.top = `${posY}px`;
+      contextMenu.style.transformOrigin = `${originY} ${originX}`;
+
+      // Build items using safe DOM methods (NOT innerHTML +=)
+      items.forEach(item => {
+        if(item.divider) {
+           const divider = document.createElement('div');
+           divider.className = "h-px w-full bg-white/10 my-1";
+           contextMenu.appendChild(divider);
+           return;
+        }
+        
+        const div = document.createElement('div');
+        div.className = `px-4 py-2.5 text-[13px] font-semibold cursor-pointer transition-colors hover:bg-white/20 flex items-center gap-3 select-none rounded-md mx-1 my-0.5 ${item.danger ? 'text-[#FF5F56] hover:!bg-red-500/20' : 'text-white'}`;
+        div.innerHTML = `<div class="w-3.5 h-3.5 flex items-center justify-center opacity-80">${item.icon || ''}</div> <span>${item.label}</span>`;
+        
+        // Pure click event (bulletproof)
+        div.onclick = (e) => { 
+          e.stopPropagation(); 
+          item.action(); 
+          hideContextMenu(); 
+        };
+        contextMenu.appendChild(div);
+      });
+      
+      // Trigger Reflow to play CSS animation
+      void contextMenu.offsetWidth; 
+      contextMenu.classList.remove('ctx-menu-exit');
+      contextMenu.classList.add('ctx-menu-enter');
+    }
+    
+    function hideContextMenu() { 
+      contextMenu.classList.remove('ctx-menu-enter'); 
+      contextMenu.classList.add('ctx-menu-exit'); 
+    }
+    
+    // Hide when clicking anywhere outside
+    document.addEventListener('mousedown', (e) => {
+      if (!contextMenu.contains(e.target)) hideContextMenu();
+    });
+    
+    // Desktop Right Click
+    document.addEventListener('contextmenu', (e) => {
+      if (!e.target.closest('.dock-item') && !e.target.closest('.os-window')) {
+         e.preventDefault();
+         showContextMenu(e.clientX, e.clientY, [
+           { label: 'Open App Center', icon: ICONS.store, action: () => window.openApp('appcenter') },
+           { divider: true },
+           { label: 'Reset Settings', icon: ICONS.close, danger: true, action: window.resetOS }
+         ]);
+      }
+    });
+
+    // --- Dock Logic ---
+    window.togglePin = (appId) => {
+      if (currentDock.includes(appId)) currentDock = currentDock.filter(id => id !== appId);
+      else currentDock.push(appId);
+      localStorage.setItem('mathstudies_dock', JSON.stringify(currentDock));
+      renderDock();
+    };
+
+    function renderDock() {
+      dockContainer.innerHTML = '';
+      
+      const activeAppIds = [...new Set(windows.map(w => w.appId))];
+      const dynamicApps = activeAppIds.filter(id => !currentDock.includes(id));
+      const displayDock = [...currentDock, ...dynamicApps];
+
+      displayDock.forEach((appId, index) => {
+        const app = APPS_CONFIG[appId];
+        if(!app) return;
+
+        const isPinned = currentDock.includes(appId);
+        const appWindows = windows.filter(w => w.appId === app.id);
+        const isOpen = appWindows.length > 0;
+        const isActive = activeWindowId && windows.find(w => w.id === activeWindowId)?.appId === app.id;
+        
+        const btnWrapper = document.createElement('div');
+        btnWrapper.className = "dock-item relative group flex flex-col items-center cursor-pointer";
+        
+        if (isPinned) {
+          btnWrapper.draggable = true;
+          btnWrapper.dataset.index = currentDock.indexOf(appId);
+          
+          btnWrapper.ondragstart = (e) => { e.dataTransfer.setData('text/plain', btnWrapper.dataset.index); setTimeout(() => btnWrapper.classList.add('dragging'), 0); };
+          btnWrapper.ondragend = () => { btnWrapper.classList.remove('dragging'); document.querySelectorAll('.drag-over').forEach(el => el.classList.remove('drag-over')); };
+          btnWrapper.ondragover = (e) => { e.preventDefault(); if(!btnWrapper.classList.contains('dragging')) btnWrapper.classList.add('drag-over'); };
+          btnWrapper.ondragleave = () => btnWrapper.classList.remove('drag-over');
+          btnWrapper.ondrop = (e) => {
+            e.preventDefault();
+            const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+            const toIndex = parseInt(btnWrapper.dataset.index);
+            if(fromIndex !== toIndex && !isNaN(fromIndex)) {
+              const movedItem = currentDock.splice(fromIndex, 1)[0];
+              currentDock.splice(toIndex, 0, movedItem);
+              localStorage.setItem('mathstudies_dock', JSON.stringify(currentDock));
+              renderDock();
+            }
+          };
+        }
+
+        btnWrapper.onclick = (e) => {
+          if (isOpen) {
+            const topWin = appWindows.reduce((prev, current) => (prev.zIndex > current.zIndex) ? prev : current);
+            if (topWin.isMinimized || activeWindowId !== topWin.id) window.unminimizeWindow(topWin.id);
+            else window.minimizeWindow(topWin.id);
+          } else { window.openApp(app.id); }
+        };
+
+        btnWrapper.oncontextmenu = (e) => {
+          e.preventDefault(); e.stopPropagation();
+          showContextMenu(e.clientX, e.clientY, [
+            { label: 'New Window', icon: ICONS.newWin, action: () => window.openApp(app.id, true) },
+            { label: isPinned ? 'Unpin from Dock' : 'Keep in Dock', icon: isPinned ? ICONS.unpin : ICONS.pin, action: () => window.togglePin(app.id) },
+            ...(isOpen ? [{ divider: true }, { label: 'Close All', icon: ICONS.close, danger: true, action: () => { appWindows.forEach(w => window.closeWindow(w.id)); } }] : [])
+          ]);
+        };
+
+        btnWrapper.innerHTML = `
+          <div class="absolute -top-14 bg-black/80 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap shadow-xl border border-white/10 z-50 transform scale-95 group-hover:scale-100 group-hover:-translate-y-1">
+            ${app.name}
+          </div>
+          <div class="dock-icon w-[52px] h-[52px] rounded-2xl flex items-center justify-center text-white origin-bottom ${app.color} shadow-md relative overflow-hidden ${isActive ? 'ring-2 ring-white/50 ring-offset-2 ring-offset-transparent brightness-110' : 'brightness-100'}">
+            <div class="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent opacity-40 pointer-events-none"></div>
+            <div class="w-7 h-7 relative z-10 drop-shadow-sm pointer-events-none">${app.icon}</div>
+          </div>
+          <div class="absolute -bottom-1.5 w-1 h-1 rounded-full transition-all duration-300 ${isOpen && !appWindows.every(w=>w.isMinimized) ? 'bg-white shadow-[0_0_5px_rgba(255,255,255,0.8)]' : 'bg-transparent scale-0'}"></div>
+        `;
+        dockContainer.appendChild(btnWrapper);
+      });
+    }
+
+    // --- Content Routing ---
+    function renderAppCenter() {
+      let gridHtml = '';
+      let delay = 0;
+      Object.values(APPS_CONFIG).forEach((app) => {
+        if (app.id === 'appcenter') return;
+        gridHtml += `
+          <div class="glass-ultra p-5 rounded-2xl flex flex-col items-start gap-4 card-hover cursor-pointer" style="animation: cardSpawn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay}s backwards;" onclick="window.openApp('${app.id}', true)">
+            <div class="flex w-full items-center gap-4 pointer-events-none">
+              <div class="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${app.color} text-white shadow-md relative overflow-hidden">
+                <div class="w-7 h-7">${app.icon}</div>
+              </div>
+              <div class="flex-1 overflow-hidden">
+                <h3 class="font-bold text-white text-lg leading-tight truncate drop-shadow-sm">${app.name}</h3>
+                <p class="text-xs text-white/60 truncate mt-0.5 font-medium">${app.desc}</p>
+              </div>
+            </div>
+          </div>
+        `;
+        delay += 0.05;
+      });
+
+      return `
+        <div class="w-full h-full flex flex-col overflow-y-auto text-white p-6 scroll-smooth">
+          <div class="max-w-4xl mx-auto w-full flex-1">
+            <h1 class="text-3xl font-bold mb-1 drop-shadow-md tracking-tight">App Center</h1>
+            <p class="text-white/60 mb-8 font-medium text-sm">Click an app to launch a new window.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">${gridHtml}</div>
+          </div>
+          <div class="w-full flex justify-center mt-10 mb-4">
+             <button onclick="window.resetOS()" class="px-6 py-2 bg-red-500/20 hover:bg-red-500/40 text-red-200 border border-red-500/30 rounded-xl font-bold text-sm transition-all duration-200 btn-press flex items-center gap-2">
+               ${ICONS.close} Reset OS
+             </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function getAppContent(win) {
+      const app = APPS_CONFIG[win.appId];
+      if (app.id === 'appcenter') return renderAppCenter();
+      if (app.id === 'browser') {
+        return `
+          <div class="w-full h-full flex flex-col bg-[#f5f5f7]">
+            <div class="h-12 flex items-center px-4 bg-white/80 backdrop-blur-md border-b border-gray-200 gap-4 select-none">
+              <div class="flex gap-3 text-gray-400">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="hover:text-gray-800 transition-colors cursor-pointer btn-press"><polyline points="15 18 9 12 15 6"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="hover:text-gray-800 transition-colors cursor-pointer btn-press"><polyline points="9 18 15 12 9 6"/></svg>
+              </div>
+              <div class="flex-1 max-w-xl mx-auto bg-gray-100 border border-gray-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-gray-800 shadow-inner text-center truncate">${app.url}</div>
+            </div>
+            <iframe src="${app.url}" class="w-full flex-1 border-none bg-white" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+          </div>
+        `;
+      }
+      return `<iframe src="${app.url}" class="w-full h-full border-none bg-white"></iframe>`;
+    }
+
+    // --- Window Engine ---
+    window.openApp = (appId, forceNew = false) => {
+      const existing = windows.find(w => w.appId === appId);
+      if (existing && !forceNew) {
+        const appWindows = windows.filter(w => w.appId === appId);
+        const topWin = appWindows.reduce((prev, current) => (prev.zIndex > current.zIndex) ? prev : current);
+        window.unminimizeWindow(topWin.id);
+        return;
+      }
+
+      highestZIndex++;
+      const id = 'win_' + Date.now() + Math.floor(Math.random()*1000);
+      const config = APPS_CONFIG[appId];
+      const offset = (windows.length * 30) % 120;
+      
+      const newWin = { id, appId, isMinimized: false, isMaximized: false, zIndex: highestZIndex, x: 100 + offset, y: 80 + offset, w: config.w, h: config.h };
+      
+      windows.push(newWin);
+      activeWindowId = id;
+      createWindowDOM(newWin);
+      window.focusWindow(id);
+      renderDock();
+    };
+
+    window.popoutApp = (id, url) => {
+      if(!url) return;
+      const newTab = window.open('about:blank', '_blank');
+      newTab.document.write(`<style>body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}</style><iframe src="${url}" style="width:100%;height:100%;border:none;"></iframe>`);
+      window.closeWindow(id);
+    };
+
+    window.focusWindow = (id) => {
+      if (activeWindowId === id && windows.find(w=>w.id===id).zIndex === highestZIndex) return;
+      highestZIndex++;
+      const winIndex = windows.findIndex(w => w.id === id);
+      if(winIndex > -1) {
+        windows[winIndex].zIndex = highestZIndex;
+        activeWindowId = id;
+        const el = document.getElementById(id);
+        if (el) {
+          el.style.zIndex = highestZIndex;
+          document.querySelectorAll('.os-window').forEach(w => w.classList.replace('opacity-100', 'opacity-95'));
+          el.classList.replace('opacity-95', 'opacity-100');
+        }
+        activeAppNameEl.innerText = APPS_CONFIG[windows[winIndex].appId].name;
+      }
+      renderDock();
+    }
+
+    window.closeWindow = (id) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.opacity = '0';
+        el.style.transform = 'scale(0.9) translateY(10px)';
+        setTimeout(() => {
+          windows = windows.filter(w => w.id !== id);
+          el.remove();
+          if (activeWindowId === id) { activeWindowId = null; activeAppNameEl.innerText = ''; }
+          renderDock();
+        }, 200);
+      }
+    }
+
+    window.minimizeWindow = (id) => {
+      const win = windows.find(w => w.id === id);
+      if (win) {
+        win.isMinimized = true;
+        const el = document.getElementById(id);
+        if (el) { el.style.opacity = '0'; el.style.transform = 'translateY(150px) scale(0.6)'; el.style.pointerEvents = 'none'; }
+        if (activeWindowId === id) { activeWindowId = null; activeAppNameEl.innerText = ''; }
+      }
+      renderDock();
+    }
+
+    window.unminimizeWindow = (id) => {
+      const win = windows.find(w => w.id === id);
+      if (win) {
+        win.isMinimized = false;
+        const el = document.getElementById(id);
+        if (el) { el.style.opacity = '1'; el.style.transform = 'translateY(0) scale(1)'; el.style.pointerEvents = 'auto'; }
+        window.focusWindow(id);
+      }
+    }
+
+    window.toggleMaximize = (id) => {
+      const win = windows.find(w => w.id === id);
+      if (!win) return;
+      win.isMaximized = !win.isMaximized;
+      const el = document.getElementById(id);
+      if (el) {
+        if (win.isMaximized) {
+          el.style.top = '28px'; el.style.left = '0px'; el.style.width = '100vw'; el.style.height = 'calc(100vh - 110px)';
+          el.classList.add('rounded-t-none', 'rounded-b-2xl'); el.classList.remove('rounded-2xl');
+        } else {
+          el.style.top = win.y + 'px'; el.style.left = win.x + 'px'; el.style.width = win.w + 'px'; el.style.height = win.h + 'px';
+          el.classList.remove('rounded-t-none', 'rounded-b-2xl'); el.classList.add('rounded-2xl');
+        }
+      }
+    }
+
+    function createWindowDOM(win) {
+      const config = APPS_CONFIG[win.appId];
+      const el = document.createElement('div');
+      el.id = win.id;
+      
+      const isNativeApp = win.appId === 'appcenter';
+      const bgClass = isNativeApp ? 'glass-ultra' : 'bg-white shadow-[0_15px_40px_rgba(0,0,0,0.4)] border border-white/20';
+      const headerClass = isNativeApp ? 'bg-white/5 border-b border-white/10' : 'bg-[#f5f5f7] border-b border-gray-200 text-gray-800';
+      const textClass = isNativeApp ? 'text-white' : 'text-gray-800';
+
+      el.className = `os-window absolute flex flex-col overflow-hidden origin-bottom rounded-2xl window-anim opacity-100 window-spawn ${bgClass}`;
+      el.style.width = win.w + 'px'; el.style.height = win.h + 'px'; el.style.top = win.y + 'px'; el.style.left = win.x + 'px'; el.style.zIndex = win.zIndex;
+      el.onmousedown = () => window.focusWindow(win.id);
+
+      const popoutHtml = config.url ? `
+        <button onclick="window.popoutApp('${win.id}', '${config.url}')" class="w-3 h-3 rounded-full bg-gray-300 flex items-center justify-center border border-black/10 transition-transform control-btn group/pop">
+          <svg viewBox="0 0 24 24" class="w-1.5 h-1.5 opacity-0 group-hover/pop:opacity-100 transition-opacity" fill="none" stroke="#444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </button>
+      ` : '';
+
+      el.innerHTML = `
+        <div class="window-header h-12 flex items-center px-4 shrink-0 select-none cursor-grab relative z-10 backdrop-blur-md ${headerClass}">
+          <div class="flex gap-2 absolute left-4 group" onmousedown="event.stopPropagation()" ondblclick="event.stopPropagation()">
+            <button onclick="window.closeWindow('${win.id}')" class="w-3 h-3 rounded-full bg-[#FF5F56] flex items-center justify-center border border-black/10 transition-transform control-btn">
+              <svg viewBox="0 0 14 14" class="w-2 h-2 opacity-0 group-hover:opacity-100 transition-opacity"><path d="M4 4l6 6m0-6l-6 6" stroke="#4c0000" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </button>
+            <button onclick="window.minimizeWindow('${win.id}')" class="w-3 h-3 rounded-full bg-[#FFBD2E] flex items-center justify-center border border-black/10 transition-transform control-btn">
+              <svg viewBox="0 0 14 14" class="w-2 h-2 opacity-0 group-hover:opacity-100 transition-opacity"><path d="M3.5 7h7" stroke="#664300" stroke-width="1.2" stroke-linecap="round"/></svg>
+            </button>
+            <button onclick="window.toggleMaximize('${win.id}')" class="w-3 h-3 rounded-full bg-[#27C93F] flex items-center justify-center border border-black/10 transition-transform control-btn">
+              <svg viewBox="0 0 14 14" class="w-2 h-2 opacity-0 group-hover:opacity-100 transition-opacity"><path d="M4.5 4.5l5 5m0-5v3.5m0-3.5h-3.5" stroke="#004d00" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            ${popoutHtml}
+          </div>
+          <div class="flex-1 text-center text-[12px] font-bold tracking-wide pointer-events-none ${textClass}">${config.name}</div>
+        </div>
+        <div class="flex-1 relative overflow-hidden bg-transparent rounded-b-2xl">
+          ${getAppContent(win)}
+          <div class="drag-overlay absolute inset-0 z-[999] hidden cursor-grabbing"></div>
+        </div>
+        <div class="resize-handle resize-e"></div><div class="resize-handle resize-s"></div><div class="resize-handle resize-se"></div>
+      `;
+
+      const header = el.querySelector('.window-header');
+      const overlay = el.querySelector('.drag-overlay');
+      let isDragging = false, isResizing = false;
+
+      header.onmousedown = (e) => {
+        if (win.isMaximized) return;
+        isDragging = true; window.focusWindow(win.id);
+        el.classList.remove('window-anim', 'window-spawn'); el.classList.add('window-dragging');
+        header.classList.replace('cursor-grab', 'cursor-grabbing'); overlay.classList.remove('hidden'); 
+        
+        let startX = e.clientX, startY = e.clientY, initialX = win.x, initialY = win.y;
+        document.onmousemove = (eMove) => {
+          if (!isDragging) return;
+          win.x = initialX + (eMove.clientX - startX); win.y = Math.max(28, initialY + (eMove.clientY - startY));
+          el.style.left = win.x + 'px'; el.style.top = win.y + 'px';
+        };
+        document.onmouseup = () => {
+          isDragging = false; el.classList.remove('window-dragging'); el.classList.add('window-anim');
+          header.classList.replace('cursor-grabbing', 'cursor-grab'); overlay.classList.add('hidden');
+          document.onmousemove = null; document.onmouseup = null;
+        };
+      };
+
+      el.querySelectorAll('.resize-handle').forEach(handle => {
+        handle.onmousedown = (e) => {
+          e.stopPropagation(); if(win.isMaximized) return;
+          isResizing = true; window.focusWindow(win.id);
+          el.classList.remove('window-anim', 'window-spawn'); el.classList.add('window-dragging'); overlay.classList.remove('hidden');
+          
+          let startX = e.clientX, startY = e.clientY, startW = win.w, startH = win.h;
+          let type = handle.classList.contains('resize-se') ? 'se' : handle.classList.contains('resize-e') ? 'e' : 's';
+          document.onmousemove = (eMove) => {
+            if(!isResizing) return;
+            if(type.includes('e')) win.w = Math.max(400, startW + (eMove.clientX - startX));
+            if(type.includes('s')) win.h = Math.max(300, startH + (eMove.clientY - startY));
+            el.style.width = win.w + 'px'; el.style.height = win.h + 'px';
+          };
+          document.onmouseup = () => {
+            isResizing = false; el.classList.remove('window-dragging'); el.classList.add('window-anim'); overlay.classList.add('hidden');
+            document.onmousemove = null; document.onmouseup = null;
+          };
+        };
+      });
+      windowContainer.appendChild(el);
+    }
+
+    renderDock();
+  </script>
+</body>
+</html>

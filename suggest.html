@@ -138,25 +138,34 @@
     }
   </style>
   <script>
-    // Moving scripts to head ensures functions exist before iframe onload triggers
+    // Hide loader when iframe loads Google Sheet
     function hideLoader() {
       const loader = document.querySelector('.loader');
-      if (loader) {
-        loader.style.display = 'none';
+      if (loader) loader.style.display = 'none';
+    }
+
+    // Set the real Google Sheets URL only after DOM loads
+    const SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTRMacIskOWkdiC8zzP4HYp6qxqxSBYJMrSOjmb-TqCo2J1RbizwqUSZ4Siljwa0Jztyae4ehjrEyLG/pubhtml?widget=true&headers=false";
+    let sheetLoaded = false;
+
+    function onFrameLoad() {
+      const f = document.getElementById('info');
+      if (!sheetLoaded) {
+        // First load: set the real src
+        f.src = SHEET_URL;
+        sheetLoaded = true;
+      } else {
+        // Sheet loaded, hide loader
+        hideLoader();
       }
     }
 
     function reloadFrame() {
       const f = document.getElementById('info');
       const loader = document.querySelector('.loader');
-      
-      if (loader) {
-        loader.style.display = 'block';
-      }
-      
-      // Adding a simple cache buster to force a real refresh
-      const baseSrc = f.src.split('&refresh=')[0];
-      f.src = baseSrc + '&refresh=' + new Date().getTime();
+      if (loader) loader.style.display = 'block';
+      // Reload with cache buster
+      f.src = SHEET_URL + '&refresh=' + new Date().getTime();
     }
   </script>
 </head>
@@ -180,8 +189,8 @@
       <div class="loader">Loading Spreadsheet...</div>
       <iframe 
         id="info"
-        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTRMacIskOWkdiC8zzP4HYp6qxqxSBYJMrSOjmb-TqCo2J1RbizwqUSZ4Siljwa0Jztyae4ehjrEyLG/pubhtml?widget=true&headers=false"
-        onload="hideLoader()">
+        src="about:blank"
+        onload="onFrameLoad()">
       </iframe>
     </main>
   </div>

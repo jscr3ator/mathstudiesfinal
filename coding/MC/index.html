@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MC Launcher</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        h1 { margin-bottom: 30px; text-shadow: 2px 2px #000; }
+
+        .container {
+            display: flex;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 20px 40px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #3e8e41;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: transform 0.2s, background-color 0.2s;
+            box-shadow: 0 4px #2e6630;
+        }
+
+        .btn:hover {
+            background-color: #4CAF50;
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px #2e6630;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Minecraft Web Launcher</h1>
+
+    <div class="container">
+        <a href="eagertoschool.html" class="btn">Eager 1.8</a>
+        <a href="eaglymc1.20.1.html" class="btn">Eagly MC 1.20.4 (Coming Soon)</a>
+    </div>
+
+</body>
+</html>
