@@ -11,9 +11,23 @@
   </style>
 </head>
 <body>
-  <h1>proxy is temporarily down mb </h1>
-  <iframe src=""></iframe>
+  <!--
+    The sandbox intentionally omits `allow-modals`, which prevents the
+    embedded page from opening blocking alert/confirm/prompt dialogs.
+    The other permissions keep the app's normal scripts, forms, storage,
+    and popups working.
+  -->
+  <iframe
+    src="https://doge-gules-nine.vercel.app/"
+    title="Khan Academy"
+    sandbox="allow-scripts allow-forms allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+  ></iframe>
   <script>
+    // Also silence dialogs created by this wrapper page itself.
+    window.alert = () => {};
+    window.confirm = () => false;
+    window.prompt = () => null;
+
     document.addEventListener('keydown', e => { if (e.key === '/') window.close(); });
   </script>
 </body>
