@@ -19,6 +19,8 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    body.save-modal-open { overflow: hidden; }
+
     main {
       width: min(1180px, calc(100% - 64px));
       min-height: 100svh;
@@ -60,6 +62,183 @@
       color: #73736f;
       font-size: 13px;
       line-height: 1.65;
+    }
+
+    .save-help {
+      position: relative;
+      display: inline-flex;
+      margin-top: 44px;
+      animation: reveal .8s .18s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .save-button {
+      position: relative;
+      z-index: 1;
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      min-height: 58px;
+      padding: 0 25px 0 27px;
+      border: 1px solid #5a5a55;
+      border-radius: 999px;
+      background: #171715;
+      color: #f2f1ed;
+      font: 500 13px/1 "Space Grotesk", system-ui, sans-serif;
+      letter-spacing: .13em;
+      cursor: pointer;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, .22);
+      transition: border-color .25s ease, background .25s ease, color .25s ease, transform .35s cubic-bezier(.16,1,.3,1), box-shadow .35s ease;
+    }
+
+    .save-button span {
+      color: #aaa9a2;
+      font-size: 21px;
+      line-height: 0;
+      transition: color .25s ease, transform .35s cubic-bezier(.16,1,.3,1);
+    }
+
+    .save-button:hover,
+    .save-button:focus-visible {
+      border-color: #f2f1ed;
+      background: #f2f1ed;
+      color: #0a0a09;
+      outline: none;
+      transform: translateY(-4px);
+      box-shadow: 0 18px 38px rgba(0, 0, 0, .32);
+    }
+
+    .save-button:hover span,
+    .save-button:focus-visible span {
+      color: #0a0a09;
+      transform: translate(3px, -3px);
+    }
+
+    .save-arrow {
+      position: absolute;
+      right: calc(100% + 24px);
+      top: -30px;
+      width: 140px;
+      height: 100px;
+      overflow: visible;
+      pointer-events: none;
+      transform: rotate(-7deg);
+    }
+
+    .save-arrow path {
+      fill: none;
+      stroke: #b5b4ad;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-width: 2.5;
+      stroke-dasharray: 240;
+      stroke-dashoffset: 240;
+      animation: draw-save-arrow 2.5s cubic-bezier(.65,0,.35,1) infinite;
+    }
+
+    @keyframes draw-save-arrow {
+      0% { stroke-dashoffset: 240; opacity: .18; }
+      18% { opacity: 1; }
+      58%, 78% { stroke-dashoffset: 0; opacity: 1; }
+      100% { stroke-dashoffset: -240; opacity: .12; }
+    }
+
+    .save-modal[hidden] { display: none; }
+
+    .save-modal {
+      position: fixed;
+      z-index: 20;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .save-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, .8);
+      backdrop-filter: blur(9px);
+      animation: save-fade .25s ease both;
+    }
+
+    .save-card {
+      position: relative;
+      z-index: 1;
+      width: min(100%, 720px);
+      max-height: calc(100svh - 48px);
+      overflow: auto;
+      padding: 34px;
+      border: 1px solid #3b3b37;
+      border-radius: 20px;
+      background: #11110f;
+      box-shadow: 0 26px 90px rgba(0, 0, 0, .6);
+      text-align: left;
+      animation: save-pop .4s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    .save-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 34px;
+      height: 34px;
+      border: 1px solid #44443f;
+      border-radius: 50%;
+      background: transparent;
+      color: #aaa9a2;
+      font: 400 21px/1 "Space Grotesk", system-ui, sans-serif;
+      cursor: pointer;
+      transition: color .2s ease, border-color .2s ease, transform .25s ease;
+    }
+
+    .save-close:hover,
+    .save-close:focus-visible {
+      border-color: #f2f1ed;
+      color: #f2f1ed;
+      outline: none;
+      transform: rotate(90deg);
+    }
+
+    .save-kicker {
+      margin: 0 0 10px;
+      color: #888780;
+      font-size: 10px;
+      letter-spacing: .16em;
+    }
+
+    .save-title {
+      margin: 0;
+      color: #f2f1ed;
+      font-family: Fraunces, Georgia, serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 600;
+      letter-spacing: -.055em;
+    }
+
+    .save-caption {
+      margin: 13px 0 26px;
+      color: #9a9992;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .save-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid #353531;
+      border-radius: 12px;
+      background: #1a1a17;
+    }
+
+    @keyframes save-fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes save-pop {
+      from { opacity: 0; transform: translateY(16px) scale(.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     .directory {
@@ -148,6 +327,10 @@
       h1 { font-size: clamp(4rem, 20vw, 6.3rem); }
       .intro-copy { margin-top: 24px; }
       .game { min-height: 84px; grid-template-columns: 34px minmax(0,1fr) auto; gap: 12px; }
+      .save-help { margin-top: 36px; }
+      .save-button { min-height: 54px; padding-inline: 22px; font-size: 12px; }
+      .save-arrow { right: auto; left: calc(50% + 12px); top: -78px; width: 118px; height: 86px; transform: scaleX(-1) rotate(-8deg); }
+      .save-card { padding: 28px 18px 18px; border-radius: 16px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -161,28 +344,72 @@
       <p class="eyebrow">Mathstudies / Library</p>
       <h1>Pick a game</h1>
       <p class="intro-copy">just choose, pretty simple haha. dw chat im looking for the other games u added in the sugesstion page</p>
+
+      <div class="save-help">
+        <svg class="save-arrow" viewBox="0 0 140 100" aria-hidden="true">
+          <path d="M6 18 C38 2, 92 12, 118 42 C128 54, 132 65, 132 76 M132 76 L115 63 M132 76 L111 80" />
+        </svg>
+        <button class="save-button" type="button" aria-haspopup="dialog" aria-controls="save-modal">
+          HOW TO SAVE YOUR PROGRESS <span aria-hidden="true">↗</span>
+        </button>
+      </div>
     </header>
 
     <nav class="directory" aria-label="Game library">
-      <a class="game" href="coding/MC/index.html" download>
-        <span class="number">01</span><span><span class="name">Minecraft Client</span><span class="description">Download the client build</span></span><span class="arrow">→</span>
-      </a>
-      <a class="game" href="/coding/MC/index.html">
-        <span class="number">02</span><span><span class="name">Minecraft Web</span><span class="description">Play directly in your browser</span></span><span class="arrow">→</span>
+      <a class="game" href="/astra18.html">
+        <span class="number">01</span><span><span class="name">Minecraft 1.8 Web</span><span class="description">Play Eaglercraft directly in your browser</span></span><span class="arrow">→</span>
       </a>
       <a class="game" href="https://openguessr.netlify.app/" target="_blank" rel="noopener">
-        <span class="number">03</span><span><span class="name">GeoGuesser</span><span class="description">Explore and guess the location</span></span><span class="arrow">↗</span>
+        <span class="number">02</span><span><span class="name">GeoGuesser</span><span class="description">Explore and guess the location</span></span><span class="arrow">↗</span>
       </a>
       <a class="game" href="coding/seraph.html">
-        <span class="number">04</span><span><span class="name">300+ Games</span><span class="description">Browse the complete catalog</span></span><span class="arrow">→</span>
+        <span class="number">03</span><span><span class="name">300+ Games</span><span class="description">Browse the complete catalog</span></span><span class="arrow">→</span>
       </a>
       <a class="game" href="coding/algebra.html">
-        <span class="number">05</span><span><span class="name">GameHub Unblocked</span><span class="description">Open the alternate library</span></span><span class="arrow">→</span>
+        <span class="number">04</span><span><span class="name">more hundreds of games</span><span class="description">Open the alternate library</span></span><span class="arrow">→</span>
       </a>
       <a class="game" href="community.html">
-        <span class="number">06</span><span><span class="name">Community</span><span class="description">See what everyone is playing</span></span><span class="arrow">→</span>
+        <span class="number">05</span><span><span class="name">Community</span><span class="description">See what everyone is playing</span></span><span class="arrow">→</span>
       </a>
     </nav>
   </main>
+
+  <div class="save-modal" id="save-modal" role="dialog" aria-modal="true" aria-labelledby="save-modal-title" hidden>
+    <div class="save-backdrop" data-save-close></div>
+    <div class="save-card">
+      <button class="save-close" type="button" aria-label="Close save guide" data-save-close>×</button>
+      <p class="save-kicker">QUICK GUIDE</p>
+      <h2 class="save-title" id="save-modal-title">How to save</h2>
+      <p class="save-caption">so many people complaining that their game running on the emulator doesnt save. just use the icons at the bottom. the first one in the circle downloads the save file, the second one instantly loads it up the next time u do it :)</p>
+      <img class="save-image" src="save.png" alt="Game save controls with the save icon highlighted">
+    </div>
+  </div>
+
+  <script>
+    const saveModal = document.getElementById('save-modal');
+    const saveButton = document.querySelector('.save-button');
+    let saveReturnFocus;
+
+    function openSaveGuide() {
+      saveReturnFocus = document.activeElement;
+      saveModal.hidden = false;
+      document.body.classList.add('save-modal-open');
+      saveModal.querySelector('.save-close').focus();
+    }
+
+    function closeSaveGuide() {
+      saveModal.hidden = true;
+      document.body.classList.remove('save-modal-open');
+      if (saveReturnFocus) saveReturnFocus.focus();
+    }
+
+    saveButton.addEventListener('click', openSaveGuide);
+    saveModal.addEventListener('click', (event) => {
+      if (event.target.hasAttribute('data-save-close')) closeSaveGuide();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !saveModal.hidden) closeSaveGuide();
+    });
+  </script>
 </body>
 </html>
