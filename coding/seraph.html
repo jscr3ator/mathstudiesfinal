@@ -11,19 +11,9 @@
   </style>
 </head>
 <body>
-  <iframe id="game-library" src="/games/" title="300+ game library"></iframe>
+  <iframe id="game-library" src="https://hashed101.netlify.app/games/index.html" title="300+ game library" loading="eager"></iframe>
   <script>
     const library = document.getElementById('game-library');
-    library.addEventListener('load', () => {
-      // Static preview servers do not run the serverless proxy. Fall back to
-      // the original embed there; deployed Vercel uses the same-origin route.
-      try {
-        const text = library.contentDocument?.body?.textContent || '';
-        if (/Cannot GET|NOT_FOUND|Page not found/i.test(text)) {
-          library.src = 'https://hashed101.netlify.app/';
-        }
-      } catch {}
-    });
     document.addEventListener('keydown', event => { if (event.key === '/') window.close(); });
   </script>
 </body>
