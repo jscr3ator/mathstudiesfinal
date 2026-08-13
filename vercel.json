@@ -7,8 +7,8 @@
     }
   },
   "rewrites": [
-    { "source": "/games", "destination": "https://hashed101.netlify.app/" },
-    { "source": "/games/", "destination": "https://hashed101.netlify.app/" },
+    { "source": "/games", "destination": "https://hashed101.netlify.app/games/index.html" },
+    { "source": "/games/", "destination": "https://hashed101.netlify.app/games/index.html" },
     { "source": "/games/storage/:path*", "destination": "https://hashed101.netlify.app/storage/:path*" },
     { "source": "/games/images/:path*", "destination": "https://hashed101.netlify.app/images/:path*" },
     { "source": "/games/:path*", "destination": "https://hashed101.netlify.app/games/:path*" },
