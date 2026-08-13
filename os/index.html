@@ -407,8 +407,9 @@
 
     window.popoutApp = (id, url) => {
       if(!url) return;
-      const newTab = window.open('about:blank', '_blank');
-      newTab.document.write(`<style>body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}</style><iframe src="${url}" style="width:100%;height:100%;border:none;"></iframe>`);
+      // Open the app itself so its localStorage/IndexedDB stays first-party.
+      // Wrapping it in another iframe makes browsers partition or block saves.
+      window.open(url, '_blank', 'noopener,noreferrer');
       window.closeWindow(id);
     };
 

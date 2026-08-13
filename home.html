@@ -1,597 +1,157 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>mathstudies</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
 
-    :root {
-      --bg: #050609;
-      --card-bg: rgba(13, 16, 23, 0.8);
-      --accent: #818cf8;
-      --accent-secondary: #c084fc;
-      --border: rgba(255, 255, 255, 0.08);
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-    }
+    * { box-sizing: border-box; }
 
-    * {
-      box-sizing: border-box;
+    body {
       margin: 0;
-      padding: 0;
+      min-height: 100svh;
+      background: #090909;
+      color: #f4f4f2;
+      font-family: Inter, system-ui, sans-serif;
       -webkit-font-smoothing: antialiased;
     }
 
-    body {
-      font-family: 'Inter', sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
+    main {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .page { width: min(100%, 920px); }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(4rem, 13vw, 9.5rem);
+      font-weight: 500;
+      line-height: .82;
+      letter-spacing: -.09em;
+      cursor: pointer;
+      animation: enter .8s cubic-bezier(.16,1,.3,1) both;
+      transition: letter-spacing .5s cubic-bezier(.16,1,.3,1), opacity .3s ease;
+    }
+
+    h1:hover { letter-spacing: -.075em; opacity: .68; }
+
+    .tagline {
+      margin: 30px 0 64px;
+      color: #666;
+      font-size: 12px;
+      letter-spacing: .01em;
+      animation: enter .8s .08s cubic-bezier(.16,1,.3,1) both;
+    }
+
+    nav {
       display: flex;
-      align-items: center;
       justify-content: center;
-      overflow-x: hidden;
-      background-image:
-        radial-gradient(at 0% 0%, hsla(231, 75%, 15%, 0.4) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, hsla(260, 75%, 15%, 0.3) 0px, transparent 50%);
-    }
-
-    .wrapper {
-      width: min(1000px, 95vw);
-      padding: 40px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
-    }
-
-    /* Header Section */
-    .header {
-      display: flex;
-      justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 12px 24px;
+      animation: enter .8s .16s cubic-bezier(.16,1,.3,1) both;
     }
 
-    .brand h1 {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 2.8rem;
-      font-weight: 800;
-      letter-spacing: -2px;
-      cursor: pointer;
-      background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      transition: transform 0.3s ease;
-    }
-
-    .brand h1:hover {
-      transform: scale(0.98);
-    }
-
-    .brand p {
-      color: var(--text-muted);
-      font-size: 15px;
-      margin-top: 4px;
-      font-weight: 500;
-    }
-
-    /* OS Mode Toggle Styling */
-    .os-mode-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      background: var(--card-bg);
-      padding: 12px 24px;
-      border-radius: 24px;
-      border: 1px solid var(--border);
-      backdrop-filter: blur(10px);
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
-      user-select: none;
-    }
-
-    .os-mode-wrapper:hover {
-      border-color: var(--accent);
-      background: rgba(255, 255, 255, 0.05);
-      box-shadow: 0 0 20px rgba(129, 140, 248, 0.1);
-    }
-
-    .os-mode-label {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-weight: 800;
+    nav a {
+      position: relative;
+      color: #9a9a98;
       font-size: 14px;
-      letter-spacing: 1px;
-      color: var(--text);
-      text-transform: uppercase;
+      letter-spacing: -.02em;
+      text-decoration: none;
+      transition: color .25s ease, transform .35s cubic-bezier(.16,1,.3,1), opacity .25s ease;
     }
 
-    .toggle-switch {
-      position: relative;
-      width: 64px;
-      height: 32px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 100px;
-      border: 1px solid var(--border);
-      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-      display: flex;
-      align-items: center;
-      padding: 0 4px;
-    }
-
-    .toggle-knob {
-      width: 24px;
-      height: 24px;
-      background: #fff;
-      border-radius: 50%;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      transform: translateX(0);
-    }
-
-    .os-mode-wrapper.active .toggle-switch {
-      background: var(--accent);
-      border-color: var(--accent);
-      box-shadow: 0 0 15px rgba(129, 140, 248, 0.4);
-    }
-
-    .os-mode-wrapper.active .toggle-knob {
-      transform: translateX(32px);
-      background: #050609;
-    }
-
-    .search-area {
-      position: relative;
-      width: 100%;
-    }
-
-    .search-area input {
-      width: 100%;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      padding: 18px 24px;
-      padding-left: 55px;
-      border-radius: 20px;
-      color: #fff;
-      font-size: 16px;
-      outline: none;
-      transition: all 0.3s ease;
-      backdrop-filter: blur(10px);
-    }
-
-    .search-area input:focus {
-      border-color: var(--accent);
-      background: rgba(255, 255, 255, 0.03);
-      box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.1);
-    }
-
-    .search-area svg {
+    nav a::after {
+      content: '';
       position: absolute;
-      left: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 22px;
-      color: var(--text-muted);
-    }
-
-    .bento-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: auto;
-      gap: 20px;
-    }
-
-    .bento-item {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 32px;
-      padding: 30px;
-      text-decoration: none;
-      color: inherit;
-      position: relative;
-      overflow: hidden;
-      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-      display: flex;
-      flex-direction: column;
-      backdrop-filter: blur(12px);
-      min-height: 250px;
-    }
-
-    .bento-item:hover {
-      border-color: rgba(255, 255, 255, 0.3);
-      background: rgba(255, 255, 255, 0.05);
-      transform: translateY(-5px);
-    }
-
-    .item-icon {
-      font-size: 32px;
-      margin-bottom: auto;
-      width: 60px;
-      height: 60px;
-      background: rgba(255, 255, 255, 0.03);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 18px;
-      border: 1px solid var(--border);
-    }
-
-    .bento-item h3 {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .bento-item p {
-      font-size: 14px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .footer {
-      text-align: center;
-      padding-top: 20px;
-      color: var(--text-muted);
-      font-size: 13px;
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    .footer a {
-      color: var(--text-muted);
-      text-decoration: none;
-      font-weight: 600;
-      transition: color 0.2s;
-    }
-
-    .footer a:hover {
-      color: var(--accent);
-    }
-
-    a {
-      color: var(--accent);
-      text-decoration: none;
-      font-weight: 500;
-      position: relative;
-      transition: color 0.3s ease;
-    }
-
-    a:hover {
-      color: #9ca3f5;
-    }
-
-    @media (max-width: 850px) {
-      .bento-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (max-width: 600px) {
-      .header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .bento-grid {
-        grid-template-columns: 1fr;
-      }
-      .os-mode-wrapper {
-        width: 100%;
-        justify-content: center;
-      }
-    }
-
-    /* Modal Styling */
-    .update-modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.7);
-      backdrop-filter: blur(4px);
-      z-index: 9999;
-      align-items: center;
+      right: 100%;
+      bottom: -6px;
+      height: 1px;
+      background: #f4f4f2;
+      transition: right .4s cubic-bezier(.16,1,.3,1);
+    }
+
+    nav a:hover { color: #fff; transform: translateY(-2px); }
+    nav a:hover::after { right: 0; }
+    nav:has(a:hover) a:not(:hover) { opacity: .28; }
+
+    nav span { color: #292929; font-size: 11px; user-select: none; }
+
+    .quiet {
+      margin-top: 68px;
+      display: flex;
       justify-content: center;
-      animation: fadeIn 0.3s ease-out;
+      gap: 22px;
+      animation: enter .8s .24s cubic-bezier(.16,1,.3,1) both;
     }
 
-    .update-modal-overlay.active {
-      display: flex;
+    .quiet a {
+      color: #494949;
+      font-size: 10px;
+      letter-spacing: .02em;
+      text-decoration: none;
+      transition: color .25s ease;
     }
 
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .quiet a:hover { color: #999; }
 
-    .update-modal {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      width: min(600px, 90vw);
-      max-height: 85vh;
-      padding: 40px;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      animation: slideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      overflow-y: auto;
-    }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(14px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    .update-title {
-      font-size: 2.2rem;
-      font-weight: 800;
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background: linear-gradient(135deg, #fff 0%, #818cf8 100%);
-      background-clip: text;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-align: center;
+    @media (max-width: 620px) {
+      h1 { font-size: clamp(3.2rem, 18vw, 5rem); }
+      .tagline { margin-bottom: 50px; }
+      nav { flex-direction: column; gap: 17px; }
+      nav span { display: none; }
+      nav a { font-size: 15px; }
+      .quiet { margin-top: 52px; }
     }
 
-    .update-content {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      animation: fadeIn 0.3s ease-out;
-    }
-
-    .update-image {
-      width: 100%;
-      height: auto;
-      max-height: 300px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      object-fit: cover;
-    }
-
-    .update-content h3 {
-      font-size: 1.4rem;
-      color: var(--accent);
-      text-align: center;
-    }
-
-    .update-content p {
-      font-size: 15px;
-      color: var(--text-muted);
-      line-height: 1.6;
-      text-align: center;
-    }
-
-    .modal-buttons {
-      display: flex;
-      justify-content: center;
-      margin-top: 16px;
-    }
-
-    .modal-btn-done {
-      padding: 12px 40px;
-      border: none;
-      border-radius: 12px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      background: var(--accent);
-      color: #000;
-      transition: all 0.3s ease;
-      width: 100%;
-    }
-
-    .modal-btn-done:hover {
-      background: #9ca3f5;
-      transform: translateY(-2px);
-    }
-
-    .version-badge {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 8px 16px;
-      background: rgba(129, 140, 248, 0.1);
-      border: 1px solid rgba(129, 140, 248, 0.3);
-      border-radius: 20px;
-      font-size: 12px;
-      color: var(--accent);
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      z-index: 100;
-    }
-
-    /* Animation classes */
-    .blur-background {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5); z-index: 9998;
-      animation: fadeIn 0.2s ease-out;
-    }
-    .badge-zoom {
-      position: fixed; z-index: 10000;
-      animation: zoomToCenter 3s ease-in-out forwards;
-      cursor: pointer;
-    }
-    @keyframes zoomToCenter {
-      0% { transform: scale(1); bottom: 20px; right: 20px; }
-      50% { transform: scale(8); bottom: 50%; right: 50%; }
-      100% { transform: scale(1); bottom: 20px; right: 20px; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
     }
   </style>
 </head>
-
 <body>
+  <main>
+    <section class="page">
+      <h1 onclick="cloak()">mathstudies</h1>
+      <p class="tagline">trust dw ill fix your guyses progresses not saving soon</p>
 
-  <div class="wrapper">
-    <header class="header">
-      <div class="brand">
-        <h1 onclick="cloak()">mathstudies</h1>
-        <p>get ready for more updates | lets make websites easy to access again.</p>
-        <p><b>prefer a more computer like styled view? Try out OS mode --></b></p>
+      <nav aria-label="Main navigation">
+        <a href="hmm.html">Games</a><span>/</span>
+        <a href="coding/procy.html">Proxy</a><span>/</span>
+        <a href="suggest.html">Suggest</a><span>/</span>
+        <a href="guide.html">Guides</a><span>/</span>
+      </nav>
+
+      <div class="quiet">
+        <a href="/os">OS mode</a>
+        <a href="javascript:cloak()">Hide URL</a>
       </div>
-
-      <!-- OS Mode Toggle -->
-      <div class="os-mode-wrapper" onclick="toggleOSMode(this)">
-        <span class="os-mode-label">OS Mode</span>
-        <div class="toggle-switch">
-          <div class="toggle-knob"></div>
-        </div>
-      </div>
-    </header>
-
-    <div class="search-area">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-      </svg>
-      <input type="text" id="toolSearch" placeholder="Quick search tools..." onkeyup="filterTiles()">
-    </div>
-
-    <div class="bento-grid" id="hubGrid">
-
-      <a href="hmm.html" class="bento-item">
-        <div class="item-icon">🎮</div>
-        <div class="content">
-          <h3>Game Library</h3>
-          <p>Access our curated collection of unblocked titles and mirror links.</p>
-        </div>
-      </a>
-
-      <a href="coding/procy.html" class="bento-item">
-        <div class="item-icon">🌐</div>
-        <div class="content">
-          <h3>Proxy Browser</h3>
-          <p>open any website, basically (crazygames, poki)</p>
-        </div>
-      </a>
-
-      <a href="suggest.html" class="bento-item">
-        <div class="item-icon">💡</div>
-        <div class="content">
-          <h3>Suggest</h3>
-          <p>Request new content or report issues with existing links.</p>
-        </div>
-      </a>
-
-      <a href="guide.html" class="bento-item">
-        <div class="item-icon">📖</div>
-        <div class="content">
-          <h3>Guides</h3>
-          <p>Unblock your Chromebook and more.</p>
-        </div>
-      </a>
-
-      <a href="extension.html" class="bento-item">
-        <div class="item-icon">⚙️</div>
-        <div class="content">
-          <h3>Chrome Extension</h3>
-          <p>Install our extension (highly recommended for ease of access)</p>
-        </div>
-      </a>
-
-    </div>
-
-    <footer class="footer">
-      <span>&copy; 2026 mathstudies</span>
-      <a href="javascript:cloak()">Hide URL</a>
-    </footer>
-  </div>
-
-  <!-- Update Modal Section -->
-  <div class="update-modal-overlay" id="updateOverlay">
-    <div class="update-modal">
-      <h2 class="update-title">introducing os mode v1</h2>
-      
-      <div class="update-content">
-        <img class="update-image" src="https://res.cloudinary.com/js-create/image/upload/v1774677994/Screenshot_2026-03-27_230508_feempu.png" alt="OS Mode Preview">
-        <h3>Experience OS Mode</h3>
-        <p>new way to experience mathstudies for those who enjoy a more computer like clean interface.</p>
-      </div>
-
-      <div class="modal-buttons">
-        <button class="modal-btn-done" onclick="closeUpdateModal()">Got it ✓</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="version-badge" onclick="showUpdateModal()">v1 OS mode</div>
+    </section>
+  </main>
 
   <script>
-    const UPDATE_VERSION = '1.0';
-
-    function toggleOSMode(el) {
-      el.classList.toggle('active');
-      setTimeout(() => {
-        window.location.href = '/os';
-      }, 450);
-    }
-
-    window.addEventListener('load', function() {
-      const savedVersion = localStorage.getItem('updateVersion');
-      if (savedVersion !== UPDATE_VERSION) {
-        showUpdateModal();
-      }
-    });
-
-    function showUpdateModal() {
-      document.getElementById('updateOverlay').classList.add('active');
-    }
-
-    function closeUpdateModal() {
-      document.getElementById('updateOverlay').classList.remove('active');
-      localStorage.setItem('updateVersion', UPDATE_VERSION);
-    }
-
-    function showArrowAnimation(event) {
-      event.preventDefault();
-      closeUpdateModal();
-      setTimeout(() => {
-        const versionBadge = document.querySelector('.version-badge');
-        const blur = document.createElement('div');
-        blur.className = 'blur-background';
-        document.body.appendChild(blur);
-        const zoomedBadge = document.createElement('div');
-        zoomedBadge.className = 'badge-zoom version-badge';
-        zoomedBadge.textContent = versionBadge.textContent;
-        zoomedBadge.style.bottom = '20px';
-        zoomedBadge.style.right = '20px';
-        document.body.appendChild(zoomedBadge);
-        setTimeout(() => {
-          zoomedBadge.remove();
-          blur.remove();
-        }, 3000);
-      }, 100);
-    }
-
-    function filterTiles() {
-      const input = document.getElementById('toolSearch');
-      const filter = input.value.toLowerCase();
-      const tiles = document.getElementsByClassName('bento-item');
-      for (let i = 0; i < tiles.length; i++) {
-        const title = tiles[i].querySelector('h3').textContent.toLowerCase();
-        const desc = tiles[i].querySelector('p').textContent.toLowerCase();
-        tiles[i].style.display = (title.includes(filter) || desc.includes(filter)) ? "flex" : "none";
-      }
-    }
-
     function cloak() {
       const win = window.open('about:blank', '_blank');
       if (!win) return;
       const iframe = win.document.createElement('iframe');
       iframe.src = window.location.origin + '/home.html';
-      iframe.style.cssText = "position:fixed; top:0; left:0; width:100%; height:100%; border:none; margin:0; padding:0; overflow:hidden; z-index:999999;";
-      win.document.body.style.margin = "0";
+      iframe.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0';
+      win.document.body.style.margin = '0';
       win.document.body.appendChild(iframe);
-      window.location.replace("https://google.com");
+      window.location.replace('https://google.com');
     }
   </script>
 </body>
-
 </html>

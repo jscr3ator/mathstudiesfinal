@@ -5,5 +5,20 @@
       "memory": 128,
       "maxDuration": 10
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/games", "destination": "https://hashed101.netlify.app/" },
+    { "source": "/games/", "destination": "https://hashed101.netlify.app/" },
+    { "source": "/games/storage/:path*", "destination": "https://hashed101.netlify.app/storage/:path*" },
+    { "source": "/games/images/:path*", "destination": "https://hashed101.netlify.app/images/:path*" },
+    { "source": "/games/:path*", "destination": "https://hashed101.netlify.app/games/:path*" },
+    { "source": "/storage/:path*", "destination": "https://hashed101.netlify.app/storage/:path*" },
+    { "source": "/images/thumbnails/:path*", "destination": "https://hashed101.netlify.app/images/thumbnails/:path*" },
+    { "source": "/images/backgrounds/:path*", "destination": "https://hashed101.netlify.app/images/backgrounds/:path*" },
+    { "source": "/images/other/:path*", "destination": "https://hashed101.netlify.app/images/other/:path*" },
+    { "source": "/images/ico.ico", "destination": "https://hashed101.netlify.app/images/ico.ico" },
+    { "source": "/coding/poke", "destination": "https://pokepath-game.pages.dev/" },
+    { "source": "/coding/poke/", "destination": "https://pokepath-game.pages.dev/" },
+    { "source": "/coding/poke/:path*", "destination": "https://pokepath-game.pages.dev/:path*" }
+  ]
 }
