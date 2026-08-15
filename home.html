@@ -102,23 +102,6 @@
 
     .quiet a:hover { color: #999; }
 
-    .bookmark-reminder { position:fixed; inset:0; z-index:10; display:grid; place-items:center; padding:20px; background:rgba(0,0,0,.58); backdrop-filter:blur(8px); }
-    .bookmark-reminder[hidden] { display:none; }
-    .bookmark-card { width:min(100%,440px); padding:34px; border:1px solid #111; border-radius:4px; background:#fff; color:#0a0a0a; box-shadow:0 24px 80px rgba(0,0,0,.3); text-align:left; animation:reminder-pop .35s cubic-bezier(.16,1,.3,1) both; }
-    .bookmark-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:42px; }
-    .bookmark-label { margin:0; color:#666; font-size:10px; letter-spacing:.18em; text-transform:uppercase; }
-    .bookmark-close { border:0; background:transparent; color:#777; font:22px/1 Arial,sans-serif; cursor:pointer; }
-    .bookmark-close:hover { color:#000; }
-    .bookmark-card h2 { margin:0; max-width:300px; font-size:clamp(2rem,8vw,3.2rem); font-weight:500; letter-spacing:-.08em; line-height:.9; }
-    .bookmark-card p { margin:22px 0 30px; color:#555; font-size:13px; line-height:1.6; }
-    .bookmark-actions { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
-    .bookmark-actions button,.bookmark-actions .bookmark-primary { min-height:44px; padding:0 18px; border:1px solid #111; border-radius:2px; background:#111; color:#fff; font:500 12px Inter,system-ui,sans-serif; cursor:pointer; transition:background .2s,color .2s; }
-    .bookmark-actions button:hover,.bookmark-actions button:focus-visible,.bookmark-actions .bookmark-primary:hover,.bookmark-actions .bookmark-primary:focus-visible { background:#fff; color:#111; outline:none; }
-    .bookmark-actions .bookmark-later { padding:0; border:0; background:transparent; color:#666; }
-    .bookmark-actions .bookmark-later:hover,.bookmark-actions .bookmark-later:focus-visible { background:transparent; color:#000; }
-    .bookmark-actions .bookmark-primary { display:inline-flex; align-items:center; color:#fff; text-decoration:none; }
-    @keyframes reminder-pop { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-
     @keyframes enter {
       from { opacity: 0; transform: translateY(14px); }
       to { opacity: 1; transform: translateY(0); }
@@ -153,41 +136,12 @@
 
       <div class="quiet">
         <a href="/os">OS mode</a>
-        <a href="status.html">Status</a>
         <a href="javascript:cloak()">Hide URL</a>
       </div>
     </section>
   </main>
 
-  <section class="bookmark-reminder" id="bookmark-reminder" hidden aria-labelledby="bookmark-title" role="dialog" aria-modal="true">
-    <div class="bookmark-card">
-      <div class="bookmark-top"><p class="bookmark-label">A quick note</p><button class="bookmark-close" id="bookmark-close" type="button" aria-label="Close">×</button></div>
-      <h2 id="bookmark-title">Save the status page.</h2>
-      <p>If mathstudies ever goes down or the main link changes, the status page will tell you where to find it.</p>
-      <div class="bookmark-actions">
-        <a class="bookmark-primary" href="status.html">Open status page ↗</a>
-        <button type="button" class="bookmark-later" id="bookmark-later">Don’t show again</button>
-      </div>
-    </div>
-  </section>
-
   <script>
-    const reminder = document.getElementById('bookmark-reminder');
-    const reminderKey = 'mathstudies-bookmark-reminder-seen';
-
-    function closeReminder() {
-      reminder.hidden = true;
-      localStorage.setItem(reminderKey, '1');
-    }
-
-    document.getElementById('bookmark-later').addEventListener('click', closeReminder);
-    document.getElementById('bookmark-close').addEventListener('click', closeReminder);
-    reminder.addEventListener('click', event => {
-      if (event.target === reminder) closeReminder();
-    });
-
-    if (!localStorage.getItem(reminderKey)) reminder.hidden = false;
-
     function cloak() {
       const win = window.open('about:blank', '_blank');
       if (!win) return;
