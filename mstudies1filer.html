@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>mathstudies</title>
+  <style>
+    :root { color-scheme:dark; --bg:#080808; --panel:#111110; --line:#2d2d2a; --muted:#858580; --text:#f5f5f1; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100svh; background:var(--bg); color:var(--text); font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif; -webkit-font-smoothing:antialiased; }
+    button,a { font:inherit; } button { color:inherit; } a { color:inherit; }
+    .site { width:min(100% - 42px,1180px); margin:auto; }
+    .topbar { position:sticky; top:0; z-index:20; display:flex; align-items:center; justify-content:space-between; gap:25px; min-height:72px; border-bottom:1px solid rgba(255,255,255,.12); background:rgba(8,8,8,.88); backdrop-filter:blur(18px); }
+    .brand { color:var(--text); font-size:15px; font-weight:600; letter-spacing:-.06em; text-decoration:none; }
+    .nav { display:flex; align-items:center; gap:5px; }
+    .nav button { padding:8px 11px; border:0; border-radius:999px; background:transparent; color:var(--muted); font-size:11px; cursor:pointer; transition:background .2s,color .2s; }
+    .nav button:hover,.nav button.active { background:#20201e; color:var(--text); }
+    .menu { display:none; border:1px solid var(--line); border-radius:999px; padding:8px 11px; background:transparent; color:var(--text); font-size:11px; }
+    #app { min-height:calc(100svh - 72px); }
+    .view { display:none; padding:clamp(55px,9vw,110px) 0 90px; animation:appear .35s ease both; }
+    .view.active { display:block; }
+    @keyframes appear { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+    .eyebrow { margin:0 0 21px; color:#666660; font-size:10px; font-weight:600; letter-spacing:.17em; text-transform:uppercase; }
+    h1 { max-width:720px; margin:0; font-size:clamp(4.2rem,13vw,10rem); font-weight:500; letter-spacing:-.105em; line-height:.79; }
+    .hero { display:grid; grid-template-columns:minmax(0,1.05fr) minmax(250px,.6fr); align-items:end; gap:70px; min-height:450px; }
+    .hero-copy { max-width:300px; margin:0 0 6px; color:var(--muted); font-size:13px; line-height:1.7; }
+    .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:34px; }
+    .button { display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:0 17px; border:1px solid #555550; border-radius:999px; background:var(--text); color:#090909; font-size:11px; font-weight:600; text-decoration:none; cursor:pointer; transition:transform .2s,background .2s,color .2s,border-color .2s; }
+    .button:hover { transform:translateY(-2px); background:#fff; }
+    .button.ghost { border-color:var(--line); background:transparent; color:var(--text); }
+    .button.ghost:hover { border-color:#777; background:#171715; }
+    .route-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:75px; }
+    .route-card { min-height:156px; padding:21px; border:1px solid var(--line); border-radius:12px; background:var(--panel); cursor:pointer; text-align:left; transition:background .25s,border-color .25s,transform .25s; }
+    .route-card:hover { border-color:#62625d; background:#171715; transform:translateY(-3px); }
+    .route-card small { color:#686862; font-size:10px; letter-spacing:.13em; text-transform:uppercase; }
+    .route-card h2 { margin:30px 0 7px; font-size:17px; font-weight:500; letter-spacing:-.04em; }
+    .route-card p { margin:0; color:var(--muted); font-size:11px; line-height:1.55; }
+    .page-head { display:flex; justify-content:space-between; align-items:end; gap:30px; padding-bottom:35px; border-bottom:1px solid var(--line); }
+    .page-head h1 { font-size:clamp(3.4rem,8vw,7rem); }
+    .page-head p { max-width:300px; margin:0; color:var(--muted); font-size:12px; line-height:1.65; }
+    .section-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:34px; }
+    .section-card { padding:25px; border:1px solid var(--line); border-radius:12px; background:var(--panel); }
+    .section-card h2 { margin:0 0 12px; font-size:15px; font-weight:500; letter-spacing:-.03em; }
+    .section-card p { margin:0; color:var(--muted); font-size:12px; line-height:1.65; }
+    .section-card .button { margin-top:22px; min-height:36px; font-size:10px; }
+    .status-banner { display:flex; justify-content:space-between; align-items:center; gap:18px; margin-top:34px; padding:21px 0; border-top:1px solid var(--text); border-bottom:1px solid var(--line); }
+    .status-label { display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; }
+    .status-dot { width:8px; height:8px; border-radius:50%; background:#d5d5ce; }
+    .status-banner span:last-child { color:var(--muted); font-size:11px; }
+    .status-list { margin-top:4px; }
+    .status-row { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:21px 0; border-bottom:1px solid var(--line); }
+    .status-row strong { display:block; font-size:13px; font-weight:500; }
+    .status-row small { display:block; margin-top:6px; color:var(--muted); font-size:11px; }
+    .operational { display:flex; align-items:center; gap:7px; color:var(--muted); font-size:11px; }
+    .operational i { width:6px; height:6px; border-radius:50%; background:#d5d5ce; }
+    .recovery { margin-top:35px; padding:23px; border-radius:12px; background:#161614; }
+    .recovery h2 { margin:0 0 8px; font-size:13px; font-weight:500; }
+    .recovery p { max-width:650px; margin:0; color:var(--muted); font-size:12px; line-height:1.65; }
+    .library { position:relative; height:min(72svh,760px); min-height:500px; margin-top:30px; overflow:hidden; border:1px solid var(--line); border-radius:12px; background:#000; }
+    .library iframe { width:100%; height:100%; border:0; background:#000; }
+    .library-note { margin:14px 0 0; color:#686862; font-size:10px; }
+    .plain-list { display:grid; gap:10px; margin-top:34px; }
+    .plain-link { display:flex; justify-content:space-between; align-items:center; gap:18px; padding:21px 0; border-bottom:1px solid var(--line); color:var(--text); text-decoration:none; }
+    .plain-link:hover { color:#c9c9c2; }
+    .plain-link strong { font-size:14px; font-weight:500; } .plain-link span { color:var(--muted); font-size:11px; }
+    button.plain-link { width:100%; border:0; background:transparent; text-align:left; cursor:pointer; }
+    .standalone { margin-top:34px; }
+    footer { display:flex; justify-content:space-between; gap:20px; margin-top:80px; color:#5c5c57; font-size:10px; }
+    @media (max-width:720px) { .site { width:min(100% - 30px,1180px); } .nav { display:none; } .menu { display:block; } .hero { display:block; min-height:0; } .hero-copy { margin-top:30px; } .route-grid,.section-grid { grid-template-columns:1fr; } .route-grid { margin-top:55px; } .page-head { display:block; } .page-head p { margin-top:25px; } .status-banner { align-items:flex-start; flex-direction:column; } footer { align-items:flex-start; flex-direction:column; margin-top:55px; } }
+  </style>
+</head>
+<body>
+  <div class="site"><header class="topbar"><a class="brand" href="#home" data-route="home">mathstudies</a><nav class="nav" aria-label="Main navigation"><button data-route="home">Home</button><button data-route="games">Games</button><button data-route="status">Status</button><button data-route="more">More</button></nav><button class="menu" id="menu-button" type="button" aria-expanded="false">Menu</button></header></div>
+  <main id="app" class="site">
+    <section class="view" data-view="home"><div class="hero"><div><p class="eyebrow">One-file edition</p><h1>mathstudies.</h1></div><div><p class="hero-copy">A compact version of the site with everything routed inside one document.</p><div class="actions"><button class="button" data-route="games">Open games</button><button class="button ghost" data-route="status">Check status</button></div></div></div><div class="route-grid"><button class="route-card" data-route="games"><small>01 / play</small><h2>Games</h2><p>Open the full 300+ game library.</p></button><button class="route-card" data-route="status"><small>02 / information</small><h2>Status</h2><p>See what is online and where to look if something changes.</p></button><button class="route-card" data-route="more"><small>03 / explore</small><h2>More</h2><p>Guides, suggestions, updates, and community pages.</p></button></div><footer><span>mathstudies / one-file edition</span><span>Use the address hash to route directly.</span></footer></section>
+    <section class="view" data-view="games"><div class="page-head"><div><p class="eyebrow">01 / play</p><h1>Games.</h1></div><p>Everything opens inside this page so it can travel as one HTML file.</p></div><div class="library"><iframe title="300+ games" loading="lazy" src="about:blank" id="games-frame"></iframe></div><p class="library-note">The games library loads only when this route is opened.</p><footer><span>mathstudies / games</span><button class="button ghost" data-route="home">Back home</button></footer></section>
+    <section class="view" data-view="status"><div class="page-head"><div><p class="eyebrow">02 / information</p><h1>Status.</h1></div><p>Bookmark this page in case the main mathstudies address ever changes.</p></div><div class="status-banner"><div class="status-label"><i class="status-dot"></i>All systems operational</div><span id="status-time">Checking now</span></div><div class="status-list"><div class="status-row"><div><strong>Main site</strong><small>Home, guides, suggestions, and navigation.</small></div><span class="operational"><i></i>Operational</span></div><div class="status-row"><div><strong>Games</strong><small>The game library and individual game pages.</small></div><span class="operational"><i></i>Operational</span></div><div class="status-row"><div><strong>Updates</strong><small>Important announcements and maintenance notes.</small></div><span class="operational"><i></i>Operational</span></div></div><div class="recovery"><h2>If the main link changes</h2><p>This is where the current link and the latest information will be posted. Bookmark this one-file page so it is easy to check later.</p></div><footer><span>mathstudies / status</span><button class="button ghost" data-route="home">Back home</button></footer></section>
+    <section class="view" data-view="more"><div class="page-head"><div><p class="eyebrow">03 / explore</p><h1>More.</h1></div><p>The rest of the project, kept behind simple routes inside the same file.</p></div><div class="section-grid"><article class="section-card"><h2>Guides</h2><p>Helpful guides and setup information.</p><button class="button ghost" data-route="guide">Open guide ↗</button></article><article class="section-card"><h2>Suggest something</h2><p>Send a game, idea, or improvement.</p><button class="button ghost" data-route="suggest">Open suggestions ↗</button></article><article class="section-card"><h2>Community games</h2><p>Games and projects shared by the community.</p><button class="button ghost" data-route="community">Open community ↗</button></article><article class="section-card"><h2>Updates</h2><p>Recent changes and project notes.</p><button class="button ghost" data-route="updates">Open updates ↗</button></article></div><div class="plain-list"><button class="plain-link" data-route="proxy"><strong>Proxy</strong><span>Open page ↗</span></button><button class="plain-link" data-route="games"><strong>Full games page</strong><span>Open page ↗</span></button></div><footer><span>mathstudies / more</span><button class="button ghost" data-route="home">Back home</button></footer></section>
+
+    <section class="view" data-view="guide"><div class="page-head"><div><p class="eyebrow">04 / guides</p><h1>Guide.</h1></div><p>Helpful setup information, kept available from the one-file edition.</p></div><div class="section-card standalone"><h2>Chromebook guide</h2><p>Open the full guide for the current instructions and screenshots.</p><a class="button" href="https://www.mathstudies.tech/guide.html" target="_blank" rel="noopener">Open full guide ↗</a></div><footer><span>mathstudies / guide</span><button class="button ghost" data-route="more">Back to more</button></footer></section>
+    <section class="view" data-view="suggest"><div class="page-head"><div><p class="eyebrow">05 / feedback</p><h1>Suggest.</h1></div><p>Have a game or idea for the project? Send it through the suggestion form.</p></div><div class="section-card standalone"><h2>Share an idea</h2><p>Suggestions, game requests, and improvements are welcome.</p><a class="button" href="https://forms.gle/Jizs131fZeHQGVzN8" target="_blank" rel="noopener">Open suggestion form ↗</a></div><footer><span>mathstudies / suggestions</span><button class="button ghost" data-route="more">Back to more</button></footer></section>
+    <section class="view" data-view="community"><div class="page-head"><div><p class="eyebrow">06 / community</p><h1>Community.</h1></div><p>Projects and games shared by the people using mathstudies.</p></div><div class="section-card standalone"><h2>Community games</h2><p>Open the full community page to see the current collection.</p><a class="button" href="https://www.mathstudies.tech/community.html" target="_blank" rel="noopener">Open community games ↗</a></div><footer><span>mathstudies / community</span><button class="button ghost" data-route="more">Back to more</button></footer></section>
+    <section class="view" data-view="updates"><div class="page-head"><div><p class="eyebrow">07 / changes</p><h1>Updates.</h1></div><p>A small record of what is changing across the project.</p></div><div class="section-card standalone"><h2>Change logs</h2><p>Open the full change log for the latest project notes.</p><a class="button" href="https://www.mathstudies.tech/updates.html" target="_blank" rel="noopener">Open change logs ↗</a></div><footer><span>mathstudies / updates</span><button class="button ghost" data-route="more">Back to more</button></footer></section>
+    <section class="view" data-view="proxy"><div class="page-head"><div><p class="eyebrow">08 / tools</p><h1>Proxy.</h1></div><p>The project’s existing proxy page, kept separate from this one-file shell.</p></div><div class="section-card standalone"><h2>Open proxy</h2><p>Launch the current proxy page in its own tab.</p><a class="button" href="https://www.mathstudies.tech/coding/procy.html" target="_blank" rel="noopener">Open proxy ↗</a></div><footer><span>mathstudies / proxy</span><button class="button ghost" data-route="more">Back to more</button></footer></section>
+  </main>
+  <script>
+    const views=[...document.querySelectorAll('[data-view]')], routeButtons=[...document.querySelectorAll('[data-route]')], gamesFrame=document.getElementById('games-frame'), gameLibrary='https://hashed101.netlify.app/games/index.html';
+    let gamesLoaded=false;
+    function routeName(){const name=window.location.hash.slice(1).split('?')[0].toLowerCase();return ['home','games','status','more','guide','suggest','community','updates','proxy'].includes(name)?name:'home';}
+    function render(){const route=routeName();views.forEach(view=>view.classList.toggle('active',view.dataset.view===route));routeButtons.forEach(button=>button.classList.toggle('active',button.dataset.route===route));if(route==='games'&&!gamesLoaded){gamesFrame.src=gameLibrary;gamesLoaded=true;}document.title=route==='home'?'mathstudies':'mathstudies — '+route;window.scrollTo(0,0);}
+    routeButtons.forEach(button=>button.addEventListener('click',()=>{window.location.hash=button.dataset.route;}));
+    window.addEventListener('hashchange',render);
+    document.getElementById('menu-button').addEventListener('click',event=>{const open=event.currentTarget.getAttribute('aria-expanded')==='true';event.currentTarget.setAttribute('aria-expanded',String(!open));document.querySelector('.nav').style.display=open?'':'flex';});
+    const now=new Intl.DateTimeFormat([], {dateStyle:'medium',timeStyle:'short'}).format(new Date());document.getElementById('status-time').textContent='Last checked '+now;render();
+  </script>
+</body>
+</html>
