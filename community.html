@@ -6,61 +6,56 @@
   <title>Community Games | mathstudies</title>
   <link rel="stylesheet" href="pages.css">
   <style>
-    .community-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
-    .game-tile { padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 10px; color: inherit; background: var(--surface-raised); text-align: left; cursor: pointer; transition: border-color .35s ease, transform .35s var(--ease), background .35s var(--ease); }
-    .game-tile:hover { border-color: var(--text); background: var(--text); color: var(--bg); transform: translateY(-4px); }
-    .game-tile-img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; background: #1d1d1a; }
-    .game-tile-info { padding: 16px; }
-    .game-tile-name { font-size: 1rem; font-weight: 500; }
-    .game-tile-by { margin-top: 6px; color: var(--muted); font-size: .75rem; }
-    .game-tile:hover .game-tile-by { color: #555550; }
-    .suggest-btn { display: inline-flex; padding: 10px 16px; border: 1px solid var(--line); border-radius: 999px; color: var(--text); text-decoration: none; transition: all .3s var(--ease); }
-    .suggest-btn:hover { background: var(--text); color: var(--bg); transform: translateY(-2px); }
-    .modal { position: fixed; inset: 0; z-index: 10; display: none; place-items: center; padding: 20px; background: rgba(0,0,0,.78); }
-    .modal.active { display: grid; }
-    .modal-content { width: min(1100px, 100%); height: min(760px, 90svh); display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); box-shadow: 0 30px 100px rgba(0,0,0,.5); }
-    .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid var(--line); }
-    .modal-header h2 { margin: 0; font-family: Fraunces, Georgia, serif; font-size: 1.4rem; font-weight: 600; }
-    .modal-close { width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); background: transparent; cursor: pointer; transition: all .25s ease; }
-    .modal-close:hover { color: var(--bg); background: var(--text); border-color: var(--text); }
-    .modal-iframe { flex: 1; min-height: 0; }
-    .modal-iframe iframe { width: 100%; height: 100%; border: 0; background: white; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 28px 20px; margin-top: 40px; }
+    .tile { display: block; width: 100%; text-align: left; }
+    .tile img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); transition: border-color .15s var(--ease), opacity .15s var(--ease); }
+    .tile-info { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-top: 12px; }
+    .tile-name { font-size: 16px; font-weight: 500; transition: transform .2s var(--ease); }
+    .tile:hover img { border-color: var(--line-hot); opacity: .88; }
+    .tile:hover .tile-name { transform: translateX(3px); }
+    .tile:hover .meta { color: var(--dim); }
+
+    .modal-box.player { width: min(100%, 1100px); height: min(760px, calc(100svh - 40px)); }
+    .player-frame { flex: 1; min-height: 0; }
+    .player-frame iframe { width: 100%; height: 100%; border: 0; background: #fff; display: block; }
   </style>
 </head>
 <body>
-  <main class="site-shell">
-    <header class="header">
-      <div class="brand">
-        <h1>Community games</h1>
-        <p>A small collection of games requested by the community.</p>
-      </div>
-      <a href="hmm.html" class="back-btn">Back <span aria-hidden="true">↗</span></a>
-    </header>
+  <main class="page wide">
+    <div class="top">
+      <span><a class="link" href="home.html">mathstudies</a> / <a class="link" href="hmm.html">games</a> / community</span>
+      <a class="link" href="hmm.html">back</a>
+    </div>
 
-    <section class="content" aria-label="Community game library">
-      <div class="community-grid">
-        <button class="game-tile" onclick="openGame('PokePath', '/coding/poke/', 'https://pokepath-game.pages.dev/')">
-          <img class="game-tile-img" src="community/pokepath.png" alt="" loading="lazy">
-          <span class="game-tile-info"><span class="game-tile-name">PokePath</span><span class="game-tile-by">suggested by: unknown</span></span>
-        </button>
-        <button class="game-tile" onclick="openGame('HistorySpot', 'https://historyspot.com/activities')">
-          <img class="game-tile-img" src="community/historyspot.png" alt="" loading="lazy">
-          <span class="game-tile-info"><span class="game-tile-name">HistorySpot</span><span class="game-tile-by">suggested by: unknown</span></span>
-        </button>
-      </div>
+    <h1 class="title">Community</h1>
+    <p class="note">A small collection of games requested by the community.</p>
+
+    <section class="grid" aria-label="Community game library">
+      <button class="tile" onclick="openGame('PokePath', '/coding/poke/', 'https://pokepath-game.pages.dev/')">
+        <img src="community/pokepath.png" alt="" loading="lazy">
+        <span class="tile-info"><span class="tile-name">PokePath</span><span class="meta">suggested by unknown</span></span>
+      </button>
+      <button class="tile" onclick="openGame('HistorySpot', 'https://historyspot.com/activities')">
+        <img src="community/historyspot.png" alt="" loading="lazy">
+        <span class="tile-info"><span class="tile-name">HistorySpot</span><span class="meta">suggested by unknown</span></span>
+      </button>
     </section>
 
-    <footer class="footer"><a class="suggest-btn" href="suggest.html">Want your own? Suggest here <span aria-hidden="true">→</span></a></footer>
+    <footer class="foot">
+      <span>want yours here?</span>
+      <div class="links"><a class="link" href="suggest.html">suggest a game →</a></div>
+    </footer>
   </main>
 
-  <div class="modal" id="gameModal" role="dialog" aria-modal="true" aria-labelledby="gameTitle">
-    <div class="modal-content">
-      <header class="modal-header"><h2 id="gameTitle">Game</h2><button class="modal-close" onclick="closeGame()" aria-label="Close">×</button></header>
-      <div class="modal-iframe"><iframe id="gameIframe" title="Community game"></iframe></div>
+  <div class="modal" id="gameModal" role="dialog" aria-modal="true" aria-labelledby="gameTitle" hidden>
+    <div class="modal-box player">
+      <div class="modal-head"><h2 id="gameTitle">Game</h2><button onclick="closeGame()" aria-label="Close">close · esc</button></div>
+      <div class="player-frame"><iframe id="gameIframe" title="Community game"></iframe></div>
     </div>
   </div>
 
   <script>
+    const gameModal = document.getElementById('gameModal');
     const gameIframe = document.getElementById('gameIframe');
     gameIframe.addEventListener('load', () => {
       try {
@@ -75,13 +70,14 @@
       document.getElementById('gameTitle').textContent = name;
       gameIframe.dataset.fallback = fallback;
       gameIframe.src = url;
-      document.getElementById('gameModal').classList.add('active');
+      gameModal.hidden = false;
     }
     function closeGame() {
-      document.getElementById('gameModal').classList.remove('active');
+      gameModal.hidden = true;
       gameIframe.src = '';
       delete gameIframe.dataset.fallback;
     }
+    gameModal.addEventListener('click', event => { if (event.target === gameModal) closeGame(); });
     document.addEventListener('keydown', event => { if (event.key === 'Escape') closeGame(); });
   </script>
 </body>
